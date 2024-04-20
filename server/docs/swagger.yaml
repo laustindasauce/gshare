@@ -1,0 +1,923 @@
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.APIResponse:
+    properties:
+      data:
+        description: Data of the response
+      status:
+        description: Status of the request (success, fail)
+        type: string
+    type: object
+  models.Auth:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Event:
+    properties:
+      bytes:
+        description: Bytes is the size of the download file in bytes
+        type: integer
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      filename:
+        description: Filename is the name of the file downloaded
+        type: string
+      gallery_id:
+        type: integer
+      id:
+        type: integer
+      image_id:
+        description: Image ID is null if the event is downloading entire gallery
+        type: integer
+      requestor:
+        description: Requestor is the host that requested the download
+        type: string
+      size:
+        description: Size is the size of the image downloaded (web, original)
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Gallery:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      event_date:
+        description: The date the event occurred
+        type: string
+      events:
+        description: All events related to this gallery
+        items:
+          $ref: '#/definitions/models.Event'
+        type: array
+      expiration:
+        description: Date the gallery expires and will no longer be visible
+        type: string
+      featured_image:
+        allOf:
+        - $ref: '#/definitions/models.Image'
+        description: Featured image for the gallery
+      id:
+        type: integer
+      images:
+        description: All images in the gallery
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      images_count:
+        description: Total number of images in the gallery
+        type: integer
+      live:
+        description: Date the gallery goes live
+        type: string
+      path:
+        description: Path for the gallery on frontend
+        type: string
+      protected:
+        description: If the gallery is password protected
+        type: boolean
+      public:
+        description: |-
+          Determines if the collection is visible on the homepage
+          If protected is true, then it won't show regardless
+        type: boolean
+      title:
+        description: Title of the gallery
+        type: string
+      updatedAt:
+        type: string
+      zips_ready:
+        description: |-
+          ZipsReady will track if the zip files are created and up to date
+          If a new image is uploaded/deleted since zips were created will switch to false
+        type: boolean
+    type: object
+  models.GalleryUpdate:
+    properties:
+      event_date:
+        type: string
+      expiration:
+        type: string
+      featured_image_id:
+        type: integer
+      live:
+        type: string
+      password:
+        type: string
+      path:
+        type: string
+      protected:
+        type: boolean
+      public:
+        type: boolean
+      title:
+        type: string
+    type: object
+  models.Image:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      featured_gallery_id:
+        description: If this image is the feature image it will have the gallery ID
+          here
+        type: integer
+      filename:
+        description: Image filename
+        type: string
+      gallery_id:
+        description: The gallery this image is linked to
+        type: integer
+      height:
+        description: Height for the original image
+        type: integer
+      id:
+        type: integer
+      position:
+        description: Position in the gallery
+        type: integer
+      size:
+        description: Size of the image in bytes
+        type: integer
+      updatedAt:
+        type: string
+      width:
+        description: Width for the original image
+        type: integer
+    type: object
+  models.Settings:
+    properties:
+      client_webhook_url:
+        description: |-
+          // Photographer is the photographer's information.
+          Photographer Photographer `json:"photographer" gorm:"embedded;embeddedPrefix:photographer_"`
+          // The theme for the frontend.
+          Theme Theme `json:"theme" gorm:"embedded;embeddedPrefix:theme_"`
+          Client webhook URL for redeploying the client.
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      update:
+        description: Update is a flag that indicates if the client has backend updates
+          to catch up on.
+        type: boolean
+      updatedAt:
+        type: string
+      uptime:
+        allOf:
+        - $ref: '#/definitions/time.Duration'
+        description: Server uptime
+      version:
+        description: Server version ignored by GORM
+        type: string
+    type: object
+  models.TwoFactorAuth:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
+  models.User:
+    properties:
+      clientUpdateAvailable:
+        description: ClientUpdateAvailable is a flag that indicates if the client
+          has an update available.
+        type: boolean
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  time.Duration:
+    enum:
+    - -9223372036854775808
+    - 9223372036854775807
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
+    type: integer
+    x-enum-varnames:
+    - minDuration
+    - maxDuration
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
+info:
+  contact:
+    email: gshare@austinbspencer.com
+    name: gshare API Support
+paths:
+  /live:
+    get:
+      description: Simple health check endpoint to check if the server is alive.
+      responses:
+        "200":
+          description: OK
+      summary: confirm the server is alive
+      tags:
+      - Server
+  /ping:
+    get:
+      description: Simple ping endpoint to check if the server is alive.
+      responses:
+        "200":
+          description: OK
+      summary: ping the server
+      tags:
+      - Server
+  /ready:
+    get:
+      description: Simple health check endpoint to check if the server is ready.
+      responses:
+        "200":
+          description: OK
+      summary: confirm the server is ready
+      tags:
+      - Server
+  /v1/auth:
+    get:
+      description: Get the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: get the authenticated user, if there is one.
+      tags:
+      - Auth
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user.
+      parameters:
+      - description: User credentials
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.Auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: authenticate a user
+      tags:
+      - Auth
+    put:
+      description: Update user.
+      parameters:
+      - description: Updated User
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.User'
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: update the user with given payload
+      tags:
+      - User
+  /v1/auth/2fa:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user with their 2FA code.
+      parameters:
+      - description: Two Factor auth credentials
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.TwoFactorAuth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.APIResponse'
+      summary: authenticate a user with given 2FA code
+      tags:
+      - Auth
+  /v1/download/{size}/gallery/{galleryID}:
+    get:
+      description: Download gallery by ID.
+      parameters:
+      - description: Image Size
+        in: path
+        name: size
+        required: true
+        type: string
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Image'
+      summary: download an entire gallery by ID
+      tags:
+      - Download
+  /v1/download/{size}/image/{imageID}:
+    get:
+      description: Download image by ID.
+      parameters:
+      - description: Image Size
+        in: path
+        name: size
+        required: true
+        type: string
+      - description: Image ID
+        in: path
+        name: imageID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Image'
+      summary: download an image by ID
+      tags:
+      - Download
+  /v1/download/{size}/images/{imageIDs}:
+    get:
+      description: Download multiple images by ID.
+      parameters:
+      - description: Image Size
+        in: path
+        name: size
+        required: true
+        type: string
+      - description: Comma separated Image IDs
+        in: path
+        name: imageID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Image'
+      summary: download any number of images in a gallery
+      tags:
+      - Download
+  /v1/event/{eventID}:
+    delete:
+      description: Delete event by given ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: remove event by given ID
+      tags:
+      - Event
+  /v1/events:
+    get:
+      description: Get all events.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: get all events that exist
+      tags:
+      - Event
+    post:
+      consumes:
+      - application/json
+      description: Create an event.
+      parameters:
+      - description: New Event
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.Event'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Event'
+      summary: create a new event.
+      tags:
+      - Event
+  /v1/events/{eventID}:
+    get:
+      description: Get event by ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+      security:
+      - ApiKeyAuth: []
+      summary: get a event by ID
+      tags:
+      - Event
+  /v1/galleries:
+    get:
+      description: Get all galleries.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Gallery'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: get all galleries that exist
+      tags:
+      - Gallery
+    post:
+      consumes:
+      - application/json
+      description: Create a new gallery.
+      parameters:
+      - description: New Gallery
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.Gallery'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Gallery'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new gallery
+      tags:
+      - Gallery
+  /v1/galleries/id/{galleryID}:
+    delete:
+      description: Delete gallery by given ID.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: remove gallery by given ID
+      tags:
+      - Gallery
+    get:
+      description: Get gallery by ID.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Gallery'
+      security:
+      - ApiKeyAuth: []
+      summary: get a gallery by ID
+      tags:
+      - Gallery
+    put:
+      description: Update gallery.
+      parameters:
+      - description: Updated Gallery
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.GalleryUpdate'
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Gallery'
+      security:
+      - ApiKeyAuth: []
+      summary: update the gallery with given payload
+      tags:
+      - Gallery
+  /v1/galleries/id/{galleryID}/images:
+    post:
+      consumes:
+      - application/json
+      description: Upload a new Image.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      - description: Image file to upload
+        in: formData
+        name: src
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Image'
+      security:
+      - ApiKeyAuth: []
+      summary: upload a new Image to the gallery
+      tags:
+      - Gallery
+    put:
+      description: Update gallery images order.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      - description: Image IDs
+        in: body
+        name: images
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: update gallery images order
+      tags:
+      - Gallery
+  /v1/galleries/id/{galleryID}/images/zips:
+    post:
+      consumes:
+      - application/json
+      description: Create the zips of the gallery.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      security:
+      - ApiKeyAuth: []
+      summary: create the zip files of the gallery
+      tags:
+      - Gallery
+  /v1/galleries/id/{galleryID}/qr-code:
+    get:
+      description: Generate the QR Code for the gallery with the ID given.
+      parameters:
+      - description: Gallery ID
+        in: path
+        name: galleryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Gallery'
+      summary: create a QR Code for the gallery
+      tags:
+      - Gallery
+  /v1/galleries/live:
+    get:
+      description: Get all live galleries.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Gallery'
+            type: array
+      summary: get all galleries that are live
+      tags:
+      - Gallery
+  /v1/galleries/path/{galleryPath}:
+    get:
+      description: Get gallery by path.
+      parameters:
+      - description: Gallery Path
+        in: path
+        name: galleryPath
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Gallery'
+      summary: get a gallery by path which must be public and live
+      tags:
+      - Gallery
+    post:
+      consumes:
+      - application/json
+      description: Unlock the gallery by password.
+      parameters:
+      - description: Gallery Path
+        in: path
+        name: galleryPath
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: unlock the gallery if the given password is correct
+      tags:
+      - Gallery
+  /v1/galleries/public:
+    get:
+      description: Get all public galleries.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Gallery'
+            type: array
+      summary: get all galleries that are public and live
+      tags:
+      - Gallery
+  /v1/images:
+    get:
+      description: Get all images.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Image'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: get all images that exist
+      tags:
+      - Image
+  /v1/images/{imageID}:
+    delete:
+      description: Delete image by given ID.
+      parameters:
+      - description: Image ID
+        in: path
+        name: imageID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - ApiKeyAuth: []
+      summary: remove image by given ID
+      tags:
+      - Image
+    get:
+      description: Get image by ID.
+      parameters:
+      - description: Image ID
+        in: path
+        name: imageID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Image'
+      security:
+      - ApiKeyAuth: []
+      summary: get an image by ID
+      tags:
+      - Image
+  /v1/images/{imageID}/{width}/{quality}:
+    get:
+      consumes:
+      - application/json
+      description: Get image with specified size.
+      parameters:
+      - description: Image ID
+        in: path
+        name: imageID
+        required: true
+        type: string
+      - description: Image Width
+        in: path
+        name: width
+        required: true
+        type: integer
+      - description: Image Quality
+        in: path
+        name: quality
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: get an image with the desired width and quality; quality only works
+        with
+      tags:
+      - Image
+  /v1/settings:
+    get:
+      description: Get the server settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Settings'
+      security:
+      - ApiKeyAuth: []
+      summary: get the server settings
+      tags:
+      - Settings
+    put:
+      consumes:
+      - application/json
+      description: Update the server settings
+      parameters:
+      - description: Updated Settings
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.Settings'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Settings'
+      security:
+      - ApiKeyAuth: []
+      summary: update the server settings
+      tags:
+      - Settings
+  /v1/settings/public:
+    get:
+      description: Get the server public settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Settings'
+      summary: get the server public settings
+      tags:
+      - Settings
+  /v1/settings/redeploy:
+    post:
+      description: Redeploy the site
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Settings'
+      security:
+      - ApiKeyAuth: []
+      summary: redeploy the client site
+      tags:
+      - Settings
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery Expiration Reminder</title>
+  </head>
+  <body>
+    <p>Hello,</p>
+
+    <p>
+      Just a quick heads-up: the gallery of images I shared with you will expire
+      soon.
+    </p>
+
+    <p><strong>Expiration Date:</strong> {{.ExpirationDate}}</p>
+
+    <p>
+      Please take a moment to review
+      <a href="{{ .GalleryLink }}">your gallery</a> before they're no longer
+      accessible. If you have any questions or need an extension, feel free to
+      reach out.
+    </p>
+
+    <p>Thanks!</p>
+
+    <p>
+      Best,<br />
+      {{ .PhotographerName }}
+    </p>
+  </body>
+</html>

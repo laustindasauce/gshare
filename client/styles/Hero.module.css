@@ -1,0 +1,36 @@
+.content {
+  grid-column: 1;
+  grid-row: 1;
+  z-index: 1;
+  position: relative;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
+
+.content h3 {
+  text-shadow: 1px 1px grey !important;
+}
+
+.content a {
+  text-shadow: 0.5px 0.5px grey !important;
+  border-width: 0.15rem;
+}
+
+.content a:hover {
+  text-shadow: 0.5px 0.5px grey !important;
+  border-width: 0.15rem;
+}
+
+.heroTitle {
+  padding: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.heroButton {
+  color: white;
+  border-color: white;
+}
