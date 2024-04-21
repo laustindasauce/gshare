@@ -17,6 +17,8 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "austinbspencer", // Usually your GitHub org/user name.
   projectName: "gshare", // Usually your repo name.
+  deploymentBranch: "gh-pages",
+  trailingSlash: false,
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
