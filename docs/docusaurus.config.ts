@@ -35,7 +35,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          // routeBasePath: "/", // Serve the docs at the site's root
+          routeBasePath: "/", // Serve the docs at the site's root
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           // editUrl:
@@ -82,7 +82,7 @@ const config: Config = {
     footer: {
       style: "dark",
       links: [],
-      copyright: `gshare is available under the GPLv3 license.`,
+      copyright: `gshare is available under the GPL-3.0 license.`,
     },
     prism: {
       theme: prismThemes.github,

@@ -1,0 +1,8 @@
+{
+  "label": "Administration",
+  "position": 11,
+  "link": {
+    "type": "generated-index",
+    "description": "Administration documentation for gshare."
+  }
+}
