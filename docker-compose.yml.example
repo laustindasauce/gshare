@@ -15,17 +15,17 @@ x-gshare-container: &gshare-container
 services:
   client:
     <<: *gshare-container
-    image: raspberrypi.dingo-mamba.ts.net:3245/lab/gallery-share:latest-client
+    image: ghcr.io/austinbspencer/gshare:latest-client
     container_name: gshare-client
     ports:
       - 3000:3000
   server:
     <<: *gshare-container
-    image: raspberrypi.dingo-mamba.ts.net:3245/lab/gallery-share:latest-server
+    image: ghcr.io/austinbspencer/gshare:latest-server
     container_name: gshare-server
     ports:
       - 8080:8080
     volumes:
       # If you change the IMAGES_DIRECTORY env (default: /app/images) be sure to update here as well
       - ./gshare_images:/app/images
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock # Required to auto-restart client container
