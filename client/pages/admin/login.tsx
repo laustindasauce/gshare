@@ -11,8 +11,13 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import api from "@/lib/api";
 import LoginLayout from "@/layouts/LoginLayout";
+import { PublicSettingsModel, PublicSettingsResponse } from "@/lib/models";
 
-const SignIn = () => {
+type Props = {
+  publicSettings: PublicSettingsModel;
+};
+
+const SignIn = ({ publicSettings }: Props) => {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [twoFactor, setTwoFactor] = React.useState<boolean>(false);
@@ -31,6 +36,46 @@ const SignIn = () => {
     if (loginData.email && loginData.password) {
       api
         .login({
+          email: loginData.email,
+          password: loginData.password,
+        })
+        .then((res) => {
+          if (res.data.token) {
+            setCookie("admin-token", res.data.token);
+            setTimeout(() => {
+              setLoading(false);
+              router.push("/admin/dashboard");
+            }, 1000);
+          } else {
+            setTwoFactor(true);
+            setLoading(false);
+            setEmail(loginData.email);
+            return;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+          setError("Invalid login credentials");
+        });
+    } else {
+      setLoading(false);
+      return setError("Email & password are required.");
+    }
+  };
+
+  const handleSubmitFirstUser = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    const data = new FormData(event.currentTarget);
+    const loginData = {
+      email: data.get("email") as string,
+      password: data.get("password") as string,
+    };
+
+    if (loginData.email && loginData.password) {
+      api
+        .createFirstUser({
           email: loginData.email,
           password: loginData.password,
         })
@@ -127,10 +172,21 @@ const SignIn = () => {
             {error}
           </Alert>
         </Collapse>
+
+        {!!publicSettings?.new_application && (
+          <Alert severity="info" sx={{ mb: 2, mt: 2 }}>
+            Since there are no accounts created, you have the ability to create
+            the admin user now.
+          </Alert>
+        )}
         {!twoFactor ? (
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={
+              !!publicSettings?.new_application
+                ? handleSubmitFirstUser
+                : handleSubmit
+            }
             noValidate
             sx={{ mt: 1 }}
           >
@@ -163,7 +219,7 @@ const SignIn = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              {!!publicSettings?.new_application ? "Create Account" : "Sign In"}
             </LoadingButton>
           </Box>
         ) : (
@@ -241,5 +297,15 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
+
+  try {
+    const publicSettingsResp: PublicSettingsResponse =
+      await api.getSettingsPublic();
+
+    return { props: { publicSettings: publicSettingsResp.data } };
+  } catch (error) {
+    console.error(error);
+  }
+
   return { props: {} };
 };

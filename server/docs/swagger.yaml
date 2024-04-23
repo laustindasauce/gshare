@@ -95,6 +95,16 @@ definitions:
           Determines if the collection is visible on the homepage
           If protected is true, then it won't show regardless
         type: boolean
+      reminder:
+        description: |-
+          If the gallery should send out an automated reminder
+          Reminder gets sent 5 days prior to expiration
+        type: boolean
+      reminder_emails:
+        description: |-
+          If reminders are enabled, we need to have the emails to send to
+          These are a space separated list of emails
+        type: string
       title:
         description: Title of the gallery
         type: string
@@ -124,6 +134,10 @@ definitions:
         type: boolean
       public:
         type: boolean
+      reminder:
+        type: boolean
+      reminder_emails:
+        type: string
       title:
         type: string
     type: object
@@ -162,20 +176,16 @@ definitions:
     type: object
   models.Settings:
     properties:
-      client_webhook_url:
-        description: |-
-          // Photographer is the photographer's information.
-          Photographer Photographer `json:"photographer" gorm:"embedded;embeddedPrefix:photographer_"`
-          // The theme for the frontend.
-          Theme Theme `json:"theme" gorm:"embedded;embeddedPrefix:theme_"`
-          Client webhook URL for redeploying the client.
-        type: string
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
       id:
         type: integer
+      new_application:
+        description: NewApplication will alert the frontend that there are no users
+          and we need to create admin
+        type: boolean
       update:
         description: Update is a flag that indicates if the client has backend updates
           to catch up on.
@@ -199,10 +209,6 @@ definitions:
     type: object
   models.User:
     properties:
-      clientUpdateAvailable:
-        description: ClientUpdateAvailable is a flag that indicates if the client
-          has an update available.
-        type: boolean
       createdAt:
         type: string
       deletedAt:
@@ -915,6 +921,50 @@ paths:
       summary: redeploy the client site
       tags:
       - Settings
+  /v1/users/{userID}:
+    put:
+      consumes:
+      - application/json
+      description: Update user.
+      parameters:
+      - description: Updated User
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: update the user.
+      tags:
+      - User
+  /v1/users/admin/create:
+    post:
+      consumes:
+      - application/json
+      description: Create first admin user.
+      parameters:
+      - description: New User
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: create the first admin user.
+      tags:
+      - User
 securityDefinitions:
   ApiKeyAuth:
     in: header

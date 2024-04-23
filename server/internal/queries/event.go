@@ -18,7 +18,7 @@ type eventRepository struct {
 }
 
 func NewEventRepository() EventRepository {
-	return &eventRepository{db: database.Postgres}
+	return &eventRepository{db: database.DB}
 }
 
 func (r *eventRepository) GetEventByID(id string) (*models.Event, error) {

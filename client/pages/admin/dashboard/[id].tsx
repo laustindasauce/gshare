@@ -103,6 +103,32 @@ const GalleryHandler = ({ galleryID, token }: Props) => {
     mutateGallery();
   };
 
+  const handleRemoveFeaturedImage = () => {
+    const updateGallery: GalleryUpdateModel = {
+      featured_image_id: 0,
+    };
+    api
+      .updateGallery(updateGallery, gallery.ID)
+      .then((res) => {
+        setSnackbar({
+          ...snackbar,
+          severity: "success",
+          message: "Gallery feature image removed.",
+          open: true,
+        });
+        mutateGallery(res);
+      })
+      .catch((err) => {
+        console.error(err);
+        setSnackbar({
+          ...snackbar,
+          severity: "error",
+          message: "Unable to update gallery.",
+          open: true,
+        });
+      });
+  };
+
   const handleUpdate = (formData: GalleryUpdateModel) => {
     setUpdateLoading(true);
 
@@ -219,11 +245,18 @@ const GalleryHandler = ({ galleryID, token }: Props) => {
         </Box>
         <TabPanel value="one">
           {gallery.featured_image.ID !== 0 && (
-            <FeaturedImage
-              photo={gallery.featured_image}
-              maxHeight={500}
-              maxWidth={500}
-            />
+            <>
+              <FeaturedImage
+                photo={gallery.featured_image}
+                maxHeight={500}
+                maxWidth={500}
+              />
+              <Stack sx={{ mb: 4 }} direction="row" justifyContent="center">
+                <Button onClick={handleRemoveFeaturedImage} color="error">
+                  remove featured image
+                </Button>
+              </Stack>
+            </>
           )}
 
           <Grid container spacing={2}>

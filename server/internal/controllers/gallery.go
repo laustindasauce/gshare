@@ -53,9 +53,12 @@ func CreateGallery(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	settingsQueries := queries.NewSettingsRepository()
-	if err := settingsQueries.SetSettingsUpdate(true); err != nil {
-		log.Errorf("Error setting settings update to false: %v\n", err)
+	if gallery.IsLive() {
+		// Set update as true if the gallery was updated while live
+		settingsQueries := queries.NewSettingsRepository()
+		if err := settingsQueries.SetSettingsUpdate(true); err != nil {
+			log.Errorf("Error setting settings update to true: %v\n", err)
+		}
 	}
 
 	// Return the created gallery
@@ -488,7 +491,7 @@ func UploadGalleryImage(c *fiber.Ctx) error {
 		// Set update as true if the gallery was updated while live
 		settingsQueries := queries.NewSettingsRepository()
 		if err := settingsQueries.SetSettingsUpdate(true); err != nil {
-			log.Errorf("Error setting settings update to false: %v\n", err)
+			log.Errorf("Error setting settings update to true: %v\n", err)
 		}
 	}
 
@@ -538,11 +541,26 @@ func UpdateGallery(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Println(galleryUpdate)
+
 	// Handle featured image updates here
 	if galleryUpdate.FeaturedImageID != nil {
-		if *galleryUpdate.FeaturedImageID != gallery.FeaturedImage.ID {
-			// Need to update featured image
-			imageQueries := queries.NewImageRepository()
+		// Need to update featured image
+		imageQueries := queries.NewImageRepository()
+
+		// Expect featured image ID of 0 to remove it altogether
+		if *galleryUpdate.FeaturedImageID == 0 {
+			log.Info("Removing featured image from gallery")
+			// Remove existing featured image if exists
+			if gallery.FeaturedImage.ID != 0 {
+				if err := imageQueries.SetImageAsFeatImg(&gallery.FeaturedImage, nil); err != nil {
+					log.Errorf("Error adding new image to DB: %v\n", err)
+					return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+				}
+			}
+
+			gallery.FeaturedImage = models.Image{}
+		} else if *galleryUpdate.FeaturedImageID != gallery.FeaturedImage.ID {
 			// Only query for images within the given gallery
 			newFeatImg, err := imageQueries.GetGalleryImageByID(galleryID, fmt.Sprint(*galleryUpdate.FeaturedImageID))
 			if err != nil {
@@ -577,7 +595,7 @@ func UpdateGallery(c *fiber.Ctx) error {
 		// Set update as true if the gallery was updated while live
 		settingsQueries := queries.NewSettingsRepository()
 		if err := settingsQueries.SetSettingsUpdate(true); err != nil {
-			log.Errorf("Error setting settings update to false: %v\n", err)
+			log.Errorf("Error setting settings update to true: %v\n", err)
 		}
 	}
 
@@ -641,7 +659,7 @@ func UpdateGalleryImagesOrder(c *fiber.Ctx) error {
 		// Set update as true if the gallery was updated while live
 		settingsQueries := queries.NewSettingsRepository()
 		if err := settingsQueries.SetSettingsUpdate(true); err != nil {
-			log.Errorf("Error setting settings update to false: %v\n", err)
+			log.Errorf("Error setting settings update to true: %v\n", err)
 		}
 	}
 
@@ -691,7 +709,7 @@ func DeleteGallery(c *fiber.Ctx) error {
 		// Set update as true if the gallery was updated while live
 		settingsQueries := queries.NewSettingsRepository()
 		if err := settingsQueries.SetSettingsUpdate(true); err != nil {
-			log.Errorf("Error setting settings update to false: %v\n", err)
+			log.Errorf("Error setting settings update to true: %v\n", err)
 		}
 	}
 

@@ -29,18 +29,21 @@ type User struct {
 	Password *string `json:"password,omitempty" gorm:"not null"`
 	// 2FA
 	AuthCode *string `json:"-"`
-	// ClientUpdateAvailable is a flag that indicates if the client has an update available.
-	ClientUpdateAvailable bool `json:"clientUpdateAvailable" gorm:"default:false"`
+}
+
+// UserUpdate is a model to handle updates on the user
+type UserUpdate struct {
+	Email    *string `json:"email"`
+	Password *string `json:"password"`
 }
 
 // APIUser represents a user in the API response.
 type APIUser struct {
-	ID                    uint
-	CreatedAt             time.Time
-	UpdatedAt             time.Time
-	DeletedAt             gorm.DeletedAt
-	Email                 string `json:"email"`
-	ClientUpdateAvailable bool   `json:"clientUpdateAvailable"`
+	ID        uint
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+	Email     string `json:"email"`
 }
 
 // BeforeCreate is a GORM hook that is called before creating a new user record.

@@ -1,4 +1,5 @@
-import { AppBar, Avatar, Button, Toolbar } from "@mui/material";
+import { Settings } from "@mui/icons-material";
+import { AppBar, Avatar, Button, IconButton, Toolbar } from "@mui/material";
 import { deleteCookie } from "cookies-next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -24,6 +25,9 @@ const AdminNav = (props: Props) => {
           variant="rounded"
         />
         <div style={{ flexGrow: 1 }}></div>
+        <IconButton href="/admin/settings">
+          <Settings />
+        </IconButton>
         <Button
           onClick={() => {
             deleteCookie("admin-token");

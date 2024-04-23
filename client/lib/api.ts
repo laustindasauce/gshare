@@ -14,6 +14,7 @@ import {
   LoginResponse,
   NewGalleryModel,
   SettingsResponse,
+  UserUpdateModel,
 } from "@/lib/models";
 import { getImageBlurURL } from "@/helpers/photos";
 
@@ -21,6 +22,32 @@ const axiosApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL + "/api/",
   withCredentials: true,
 });
+
+const createFirstUser = async (data: AuthModel) =>
+  new Promise<LoginResponse>((resolve, reject) =>
+    axiosApi(<ApiObject>{
+      method: "post",
+      url: `v1/users/admin/create`,
+      data,
+    })
+      .then((res) => resolve(res.data))
+      .catch((err) => reject(err.response?.data))
+  );
+
+const updateUser = async (data: UserUpdateModel, id: string | number) =>
+  new Promise<LoginResponse>((resolve, reject) =>
+    axiosApi(<ApiObject>{
+      method: "put",
+      url: `v1/users/${id}`,
+      data,
+      headers: {
+        Authorization: "Bearer " + getCookie("admin-token"),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => resolve(res.data))
+      .catch((err) => reject(err.response?.data))
+  );
 
 const login = async (data: AuthModel) =>
   new Promise<LoginResponse>((resolve, reject) =>
@@ -116,34 +143,31 @@ const getPublicGalleries = async () =>
         // Iterate through galleries
         for (const gallery of galleries.data) {
           try {
-            const response = await fetch(
-              getImageBlurURL(gallery.featured_image.ID, 64, 30)
+            const response = await axios.get(
+              getImageBlurURL(gallery.featured_image.ID, 64, 30),
+              {
+                responseType: "arraybuffer", // Ensure response is treated as binary data
+              }
             );
-            if (!response.ok) {
-              throw new Error("Failed to fetch image");
+
+            if (!response || !response.data) {
+              throw new Error("Empty or invalid image data received");
             }
 
-            const blob = await response.blob();
-            const reader = new FileReader();
+            // Convert the binary image data to base64
+            const base64Image = Buffer.from(response.data, "binary").toString(
+              "base64"
+            );
 
-            reader.onloadend = () => {
-              // Set base64 string as placeholder
-              gallery.featured_image = {
-                ...gallery.featured_image,
-                blurDataURL: reader.result as string,
-              };
-
-              // Check if this is the last gallery and resolve the Promise
-              if (gallery === galleries.data[galleries.data.length - 1]) {
-                resolve(galleries);
-              }
+            // Set base64 string as placeholder
+            gallery.featured_image = {
+              ...gallery.featured_image,
+              blurDataURL: `data:image/jpeg;base64,${base64Image}`,
             };
 
-            reader.onerror = (error) => {
-              reject(error);
-            };
-
-            reader.readAsDataURL(blob);
+            if (gallery === galleries.data[galleries.data.length - 1]) {
+              resolve(galleries);
+            }
           } catch (error) {
             console.error("Error fetching image:", error);
             reject(error);
@@ -478,6 +502,16 @@ const getSettings = async (_: any) =>
       .catch((err) => reject(err.response?.data))
   );
 
+const getSettingsPublic = async () =>
+  new Promise<SettingsResponse>((resolve, reject) =>
+    axiosApi(<ApiObject>{
+      method: "get",
+      url: `v1/settings/public`,
+    })
+      .then((res) => resolve(res.data))
+      .catch((err) => reject(err.response?.data))
+  );
+
 const updateSettings = async () =>
   new Promise<GalleryResponse>((resolve, reject) =>
     axiosApi(<ApiObject>{
@@ -508,6 +542,7 @@ const redeploySite = async () =>
 const api = {
   createCompany,
   createEvent,
+  createFirstUser,
   createGallery,
   createGalleryImageZips,
   deleteCompany,
@@ -530,6 +565,7 @@ const api = {
   getLiveGalleries,
   getPublicGalleries,
   getSettings,
+  getSettingsPublic,
   login,
   login2FA,
   redeploySite,
@@ -539,6 +575,7 @@ const api = {
   updateGallery,
   updateGalleryImagesOrder,
   updateSettings,
+  updateUser,
   uploadGalleryImage,
 };
 

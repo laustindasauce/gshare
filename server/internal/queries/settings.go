@@ -9,7 +9,6 @@ import (
 // SettingsRepository is the interface for settings queries.
 type SettingsRepository interface {
 	GetSettings() (*models.Settings, error)
-	GetPublicSettings() (*models.PublicSettings, error)
 	UpdateSettings(settings *models.Settings) error
 	SetSettingsUpdate(update bool) error
 }
@@ -20,21 +19,12 @@ type settingsRepository struct {
 
 // NewSettingsRepository creates a new settings repository.
 func NewSettingsRepository() SettingsRepository {
-	return &settingsRepository{db: database.Postgres}
+	return &settingsRepository{db: database.DB}
 }
 
 // GetSettings gets the settings for the server.
 func (r *settingsRepository) GetSettings() (*models.Settings, error) {
 	var settings models.Settings
-	if err := r.db.Model(models.Settings{}).First(&settings).Error; err != nil {
-		return nil, err
-	}
-	return &settings, nil
-}
-
-// GetPublicSettings gets the public settings for the server.
-func (r *settingsRepository) GetPublicSettings() (*models.PublicSettings, error) {
-	var settings models.PublicSettings
 	if err := r.db.Model(models.Settings{}).First(&settings).Error; err != nil {
 		return nil, err
 	}

@@ -7,19 +7,22 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { GetServerSideProps } from "next";
+import { GetStaticProps, GetStaticPropsContext } from "next";
 import Head from "next/head";
 import React from "react";
-import { usePublicGalleries } from "@/lib/swr";
 import PublicGalleryList from "@/components/client/PublicGalleryList";
 import { Language } from "@mui/icons-material";
 import Logo from "@/components/client/Logo";
+import api from "@/lib/api";
+import { GalleriesResponse, GalleryModel } from "@/lib/models";
 
-type Props = {};
+type Props = {
+  galleries?: GalleryModel[];
+  isLoading: boolean;
+  isError: boolean;
+};
 
-const Home = (_props: Props) => {
-  const galleriesRes = usePublicGalleries("galleries");
-
+const Home = (props: Props) => {
   return (
     <div>
       <Head>
@@ -61,7 +64,7 @@ const Home = (_props: Props) => {
       </Container>
 
       <Container maxWidth="lg">
-        <PublicGalleryList {...galleriesRes} />
+        <PublicGalleryList {...props} />
       </Container>
     </div>
   );
@@ -71,11 +74,34 @@ Home.Layout = DefaultLayout;
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const enabled = process.env.HOMEPAGE_ENABLED;
+export const getStaticProps: GetStaticProps = async (
+  context: GetStaticPropsContext
+) => {
+  console.log("test");
+  const enabled = process.env.NEXT_PUBLIC_HOMEPAGE_ENABLED;
   // Default to true if not set
   if (!enabled || enabled.toLowerCase() === "true") {
-    return { props: {} };
+    try {
+      const publicGalleriesRes: GalleriesResponse =
+        await api.getPublicGalleries();
+
+      return {
+        props: {
+          galleries: publicGalleriesRes.data,
+          isLoading: false,
+          isError: false,
+        } as Props,
+      };
+    } catch (error) {
+      console.error(error);
+
+      return {
+        props: {
+          isLoading: false,
+          isError: true,
+        } as Props,
+      };
+    }
   }
 
   return {
