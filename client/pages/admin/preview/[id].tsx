@@ -23,6 +23,7 @@ import DefaultLayout from "@/layouts/DefaultLayout";
 import { getImageBlurURL } from "@/helpers/photos";
 import axios from "axios";
 import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
 
 interface IParams extends ParsedUrlQuery {
   id: string;
@@ -39,18 +40,25 @@ const ClientGalleryPreviewHandler = (props: Props) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [locked, setLocked] = React.useState(props.locked);
-  const [heroEnabled, setHeroEnabled] = React.useState(true);
+  const router = useRouter();
+  const { p } = router.query;
 
   React.useEffect(() => {
-    if (
-      process.env.NEXT_PUBLIC_GALLERY_HERO_ENABLED &&
-      process.env.NEXT_PUBLIC_GALLERY_HERO_ENABLED.toLowerCase() === "false"
-    ) {
-      return setHeroEnabled(false);
+    if (typeof p === "string") {
+      setLoading(true);
+      api
+        .unlockGallery(props.gallery.path, p)
+        .then(() => {
+          setLocked(false);
+          setError(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setError(true);
+        })
+        .finally(() => setLoading(false));
     }
-
-    setHeroEnabled(true);
-  }, []);
+  }, [p, props.gallery.path]);
 
   const checkPassword = (pass: string) => {
     setLoading(true);
@@ -93,18 +101,9 @@ const ClientGalleryPreviewHandler = (props: Props) => {
             }
           />
         </Head>
-        {heroEnabled && (
-          <HeroImage
-            img={props.gallery.featured_image}
-            title={props.gallery.title}
-            padding={0}
-          />
-        )}
         <Backdrop
           sx={{
             color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            backdropFilter: "blur(10px)",
           }}
           open={locked}
         >
@@ -172,7 +171,7 @@ const ClientGalleryPreviewHandler = (props: Props) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {heroEnabled && (
+      {props.gallery.hero_enabled && (
         <HeroImage
           img={props.gallery.featured_image}
           title={props.gallery.title}
@@ -180,7 +179,7 @@ const ClientGalleryPreviewHandler = (props: Props) => {
         />
       )}
       <Container maxWidth={false} id="gallery-header">
-        <GalleryHeader heroEnabled={heroEnabled} gallery={props.gallery} />
+        <GalleryHeader gallery={props.gallery} />
         <GalleryHandler
           galleryID={props.gallery.ID}
           photos={props.gallery.images}

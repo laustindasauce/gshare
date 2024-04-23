@@ -8,7 +8,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 
 type Props = {
   gallery: GalleryModel;
-  heroEnabled: boolean;
 };
 
 const GalleryHeader = (props: Props) => {
@@ -23,7 +22,7 @@ const GalleryHeader = (props: Props) => {
 
   // Need to set the aos props only if hero is enabled due
   // to an issue with them not showing when hero is disabled
-  const titleProps = props.heroEnabled
+  const titleProps = props.gallery.hero_enabled
     ? {
         "data-aos": "fade-right",
         "data-aos-easing": "ease-in-cubic",
@@ -32,7 +31,7 @@ const GalleryHeader = (props: Props) => {
       }
     : {};
 
-  const buttonProps = props.heroEnabled
+  const buttonProps = props.gallery.hero_enabled
     ? {
         "data-aos": "fade-left",
         "data-aos-easing": "ease-in-cubic",
