@@ -17,5 +17,5 @@ jobs:
 
   cicd-test:
     name: "CI/CD Tests"
-    if: ${{ github.base_ref == 'refs/head/main' }}
+    if: github.base_ref == 'refs/head/main'
     uses: ./.github/workflows/cicd-test.yml
