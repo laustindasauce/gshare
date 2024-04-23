@@ -11,10 +11,12 @@ If you decide to password-protect your gallery, you would need to input the pass
 
 ### Demo
 
-When the gallery is protected and a client goes to the gallery they will see the below page. This page has the featured image in the background blurred. The purpose of still showing a blurred version of the featured image is so the client can confirm they are at the correct gallery. Once the client inputs the correct password, they will gain full access to the gallery.
+When the gallery is protected and a client goes to the gallery, they will see the below page. Once the client inputs the correct password, they will gain full access to the gallery. If they leave the gallery and come back they will be forced to enter the password again.
 
-![protected](https://i.imgur.com/9H1RdIa.png)
+![protected](https://i.imgur.com/pqL4XwB.png)
 
-:::warning Featured Image
-Keep in mind that the featured image can still be retrieved (at a low quality) without the blur if the bad actor has any technical knowledge.
+:::tip Query Password
+You can avoid having your client see this screen when they access their gallery by including the password as a [url query parameter](https://www.branch.io/glossary/query-parameters/) with key `p`.
+
+For example, if the protected gallery has a password of `super-secret` and you add `?p=super-secret` to the end of the link, then they will automatically be granted access.
 :::

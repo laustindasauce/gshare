@@ -18,7 +18,6 @@ There are many configuration options available for you within the environment va
 | NEXT_PUBLIC_PHOTOGRAPHER_WEBSITE    |           | yes      |
 | NEXT_PUBLIC_GALLERY_THEME_PRIMARY   | `#2E8555` | no       |
 | NEXT_PUBLIC_GALLERY_THEME_TEXT      | `#ffffff` | no       |
-| NEXT_PUBLIC_GALLERY_HERO_ENABLED    | `true`    | no       |
 | NEXT_PUBLIC_POWERED_BY_ENABLED      | `true`    | no       |
 | NEXT_PUBLIC_PHOTOGRAPHER_FAVICON    |           | no       |
 | NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT |           | no       |
@@ -37,13 +36,13 @@ There are many configuration options available for you within the environment va
 | NEXT_PUBLIC_CLIENT_URL              |                                                  | yes      |
 | NEXT_PUBLIC_PHOTOGRAPHER_NAME       |                                                  | yes      |
 | CLIENT_CONTAINER                    | `gshare-client`                                  | no       |
-| ALLOWED_ORIGINS                     | `http://localhost:3000`, `http://localhost:8080` | no       |
+| ALLOWED_ORIGINS                     | `http://localhost:3000`, `http://localhost:8323` | no       |
 | SERVER_READ_TIMEOUT                 | `60`                                             | no       |
 | MAX_BODY_SIZE                       | `10`                                             | no       |
 | LIMITER_ENABLED                     | `false`                                          | no       |
 | LIMITER_REQUESTS                    | `100`                                            | no       |
 | LIMITER_EXPIRATION                  | `5`                                              | no       |
-| SWAGGER_URL                         | `localhost:8080`                                 | no       |
+| SWAGGER_URL                         | `localhost:8323`                                 | no       |
 | SWAGGER_PROTOCOL                    | `http,https`                                     | no       |
 | TZ                                  | `UTC`                                            | no       |
 | JWT_SECRET_KEY                      |                                                  | yes      |
@@ -56,6 +55,8 @@ There are many configuration options available for you within the environment va
 | REDIS_HOST                          | `6379`                                           | no       |
 | REDIS_USER                          |                                                  | no       |
 | REDIS_PASSWORD                      |                                                  | no       |
+| DB_DRIVER                           | `sqlite`                                         | no       |
+| DB_PATH                             | `/data`                                          | no       |
 | DB_HOST                             | `localhost`                                      | no       |
 | DB_USER                             | `gallery`                                        | no       |
 | DB_NAME                             | `gshare_db`                                      | no       |
