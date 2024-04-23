@@ -20,7 +20,7 @@ type Props = {
   token: string;
 };
 
-const settingsHandler = ({ token }: Props) => {
+const SettingsHandler = ({ token }: Props) => {
   const [loading, setLoading] = React.useState(false);
   const { user, isError, isLoading } = useAuthUser(token);
   const [userFormData, setUserFormData] = React.useState<UserUpdateModel>({});
@@ -131,8 +131,8 @@ const settingsHandler = ({ token }: Props) => {
   );
 };
 
-settingsHandler.Layout = AdminLayout;
-export default settingsHandler;
+SettingsHandler.Layout = AdminLayout;
+export default SettingsHandler;
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext

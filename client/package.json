@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:ci": "next lint --max-warnings 0"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -26,7 +27,7 @@
     "axios": "^1.6.8",
     "cookies-next": "^4.1.1",
     "dayjs": "^1.11.10",
-    "eslint": "9.0.0",
+    "eslint": "^8.41.0",
     "eslint-config-next": "14.2.1",
     "next": "14.2.1",
     "react": "18.2.0",

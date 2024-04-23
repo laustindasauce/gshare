@@ -42,6 +42,7 @@ const HeroImage = (props: Props) => {
       />
       <Box className={styles.content}>
         {process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT && (
+          /* eslint-disable @next/next/no-img-element */
           <img
             style={{ width: "100%", maxWidth: "250px" }}
             src={process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT as string}
