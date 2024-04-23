@@ -82,7 +82,7 @@ const config: Config = {
       ],
     },
     footer: {
-      style: "dark",
+      style: "light",
       links: [],
       copyright: `gshare is available under the GPL-3.0 license.`,
     },
