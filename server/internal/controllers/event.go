@@ -32,7 +32,7 @@ func CreateEvent(c *fiber.Ctx) error {
 	if err != nil {
 		return err // Handle error if unable to marshal JSON
 	}
-	log.Infof("Request Body:\n%s\n", requestBodyJSON)
+	log.Debugf("Request Body:\n%s\n", requestBodyJSON)
 
 	// Store the body in the event and return error if encountered
 	if err := c.BodyParser(event); err != nil {

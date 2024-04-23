@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Architecture
 ---
 
-The technical architecture design for gshare is a traditional client-server, with a dedicated database for persistent storage. The client communicates with the server over HTTP using REST APIs.
+The technical architecture design for gshare follows a classic client-server model, leveraging HTTP for communication between the client and server via RESTful APIs. Data persistence is ensured through the utilization of a dedicated database, providing a reliable and scalable solution for storing and managing data across the system.
 
 ## Client
 

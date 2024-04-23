@@ -23,7 +23,7 @@ type imageRepository struct {
 }
 
 func NewImageRepository() ImageRepository {
-	return &imageRepository{db: database.Postgres}
+	return &imageRepository{db: database.DB}
 }
 
 func (r *imageRepository) GetImageByID(id string) (*models.Image, error) {
@@ -92,7 +92,12 @@ func (r *imageRepository) SetImagePosition(imageID, position int) error {
 
 // Set or remove as the featured image of the gallery
 func (r *imageRepository) SetImageAsFeatImg(image *models.Image, galleryID *uint) error {
-	return r.db.Model(&image).Update("FeaturedGalleryID", galleryID).Error
+	if galleryID != nil {
+		return r.db.Model(&image).Update("FeaturedGalleryID", galleryID).Error
+	}
+
+	// Must use map to set to nil
+	return r.db.Model(&image).Updates(map[string]interface{}{"featured_gallery_id": nil}).Error
 }
 
 func (r *imageRepository) CreateNewImage(image *models.Image) error {

@@ -76,7 +76,7 @@ const GallerySettings: React.FC<GallerySettingsProps> = ({
           <DateTimePicker
             sx={{ minWidth: "100%", mt: 2 }}
             label="Event Date"
-            value={dayjs(formData.event_date)}
+            value={formData.event_date ? dayjs(formData.event_date) : null}
             onChange={(newValue) =>
               handleInputChange("event_date", newValue || dayjs(new Date()))
             }

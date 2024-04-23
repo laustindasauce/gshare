@@ -6,8 +6,6 @@ const imageLoader = ({ src, width, quality }: ImageLoaderProps) => {
     src.startsWith("data") ||
     (src.match(/\//g) || []).length > 6
   ) {
-    console.log("Local image, skipping optimization");
-    console.log(src);
     return src;
   }
 

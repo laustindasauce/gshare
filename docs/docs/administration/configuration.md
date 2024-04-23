@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Configuration
 ---
 
-There are many configuration options available for you within the environment variables. There are environment variables for the Client and Server side with some slight overlap between the two.
+There are many configuration options available for you within the environment variables. There are environment variables for both the Client and Server side with some slight overlap between the two.
 
 ## Environment Variables
 
@@ -24,8 +24,7 @@ There are many configuration options available for you within the environment va
 | NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT |           | no       |
 | NEXT_PUBLIC_PHOTOGRAPHER_LOGO_DARK  |           | no       |
 | NEXT_PUBLIC_IMAGE_MIN_WIDTH         | `256`     | no       |
-|                                     |           |          |
-| HOMEPAGE_ENABLED                    | `true`    | no       |
+| NEXT_PUBLIC_HOMEPAGE_ENABLED        | `true`    | no       |
 
 ### Server
 
@@ -57,8 +56,6 @@ There are many configuration options available for you within the environment va
 | REDIS_HOST                          | `6379`                                           | no       |
 | REDIS_USER                          |                                                  | no       |
 | REDIS_PASSWORD                      |                                                  | no       |
-| ADMIN_EMAIL                         | `admin@domain.dev`                               | no       |
-| ADMIN_PASSWORD                      | `insecure`                                       | no       |
 | DB_HOST                             | `localhost`                                      | no       |
 | DB_USER                             | `gallery`                                        | no       |
 | DB_NAME                             | `gshare_db`                                      | no       |

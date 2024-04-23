@@ -8,6 +8,7 @@ import (
 
 // UserRepository is the interface for user queries.
 type UserRepository interface {
+	GetUserCount() (int, error)
 	GetUserByID(id string) (*models.APIUser, error)
 	GetFullUserByID(id string) (*models.User, error)
 	GetUserByEmail(email string) (*models.APIUser, error)
@@ -25,7 +26,16 @@ type userRepository struct {
 
 // NewUserRepository creates a new user repository.
 func NewUserRepository() UserRepository {
-	return &userRepository{db: database.Postgres}
+	return &userRepository{db: database.DB}
+}
+
+// GetUserCount retrieves the total number of users in the database.
+func (r *userRepository) GetUserCount() (int, error) {
+	var count int64
+	if err := r.db.Model(models.User{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }
 
 // GetUserByID gets a user by their ID.

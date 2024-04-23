@@ -168,6 +168,16 @@ export interface SettingsModel {
   uptime: number;
 }
 
+export interface PublicSettingsModel {
+  update: boolean;
+  new_application?: boolean;
+}
+
+export interface UserUpdateModel {
+  email?: string | null;
+  password?: string | null;
+}
+
 // responses
 
 export interface ApiObject {
@@ -214,6 +224,11 @@ export interface ImageDeleteResponse {
 export interface SettingsResponse {
   status: string;
   data: SettingsModel;
+}
+
+export interface PublicSettingsResponse {
+  status: string;
+  data: PublicSettingsModel;
 }
 
 // Other

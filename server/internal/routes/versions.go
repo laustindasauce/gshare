@@ -17,4 +17,6 @@ func VersionedRoutes(a *fiber.App) {
 	v1routes.ImagePrivateRoutes(a)
 	v1routes.SettingsPublicRoutes(a)
 	v1routes.SettingsPrivateRoutes(a)
+	v1routes.UserPublicRoutes(a)
+	v1routes.UserPrivateRoutes(a)
 }

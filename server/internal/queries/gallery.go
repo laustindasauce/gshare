@@ -27,7 +27,7 @@ type galleryRepository struct {
 }
 
 func NewGalleryRepository() GalleryRepository {
-	return &galleryRepository{db: database.Postgres}
+	return &galleryRepository{db: database.DB}
 }
 
 func (r *galleryRepository) GetGalleryByID(id string) (*models.Gallery, error) {

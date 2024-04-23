@@ -1080,6 +1080,77 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/users/admin/create": {
+            "post": {
+                "description": "Create first admin user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "create the first admin user.",
+                "parameters": [
+                    {
+                        "description": "New User",
+                        "name": "payload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/users/{userID}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "update the user.",
+                "parameters": [
+                    {
+                        "description": "Updated User",
+                        "name": "payload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1220,6 +1291,14 @@ const docTemplate = `{
                     "description": "Determines if the collection is visible on the homepage\nIf protected is true, then it won't show regardless",
                     "type": "boolean"
                 },
+                "reminder": {
+                    "description": "If the gallery should send out an automated reminder\nReminder gets sent 5 days prior to expiration",
+                    "type": "boolean"
+                },
+                "reminder_emails": {
+                    "description": "If reminders are enabled, we need to have the emails to send to\nThese are a space separated list of emails",
+                    "type": "string"
+                },
                 "title": {
                     "description": "Title of the gallery",
                     "type": "string"
@@ -1259,6 +1338,12 @@ const docTemplate = `{
                 },
                 "public": {
                     "type": "boolean"
+                },
+                "reminder": {
+                    "type": "boolean"
+                },
+                "reminder_emails": {
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -1313,10 +1398,6 @@ const docTemplate = `{
         "models.Settings": {
             "type": "object",
             "properties": {
-                "client_webhook_url": {
-                    "description": "// Photographer is the photographer's information.\nPhotographer Photographer ` + "`" + `json:\"photographer\" gorm:\"embedded;embeddedPrefix:photographer_\"` + "`" + `\n// The theme for the frontend.\nTheme Theme ` + "`" + `json:\"theme\" gorm:\"embedded;embeddedPrefix:theme_\"` + "`" + `\nClient webhook URL for redeploying the client.",
-                    "type": "string"
-                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -1325,6 +1406,10 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "new_application": {
+                    "description": "NewApplication will alert the frontend that there are no users and we need to create admin",
+                    "type": "boolean"
                 },
                 "update": {
                     "description": "Update is a flag that indicates if the client has backend updates to catch up on.",
@@ -1361,10 +1446,6 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
-                "clientUpdateAvailable": {
-                    "description": "ClientUpdateAvailable is a flag that indicates if the client has an update available.",
-                    "type": "boolean"
-                },
                 "createdAt": {
                     "type": "string"
                 },

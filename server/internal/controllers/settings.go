@@ -53,10 +53,23 @@ func GetSettings(c *fiber.Ctx) error {
 func GetPublicSettings(c *fiber.Ctx) error {
 	settingsQueries := queries.NewSettingsRepository()
 
-	settings, err := settingsQueries.GetPublicSettings()
+	settings, err := settingsQueries.GetSettings()
 	if err != nil || settings == nil {
 		log.Warn("Settings not found in the DB")
 		return fiber.NewError(fiber.StatusNotFound, "No settings found in the DB")
+	}
+
+	userQueries := queries.NewUserRepository()
+
+	userCount, err := userQueries.GetUserCount()
+	if err != nil {
+		log.Errorf("Unable to retrieve the number of users in DB: %v\n", err)
+		return fiber.NewError(fiber.StatusNotFound, "No users found in the DB")
+	}
+
+	if userCount == 0 {
+		newApp := true
+		settings.NewApplication = &newApp
 	}
 
 	// Return success and the server settings
