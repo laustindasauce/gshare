@@ -39,6 +39,7 @@ const GallerySettings: React.FC<GallerySettingsProps> = ({
     protected: gallery.protected,
     reminder: gallery.reminder,
     reminder_emails: gallery.reminder_emails,
+    hero_enabled: gallery.hero_enabled,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -113,9 +114,14 @@ const GallerySettings: React.FC<GallerySettingsProps> = ({
               control={
                 <Switch
                   checked={formData.public || false}
-                  onChange={(e) =>
-                    handleInputChange("public", e.target.checked)
-                  }
+                  onChange={(e) => {
+                    handleInputChange("public", e.target.checked);
+                    if (e.target.checked) {
+                      if (formData.protected) {
+                        handleInputChange("protected", false);
+                      }
+                    }
+                  }}
                 />
               }
               label="Public"
@@ -124,9 +130,14 @@ const GallerySettings: React.FC<GallerySettingsProps> = ({
               control={
                 <Switch
                   checked={formData.protected || false}
-                  onChange={(e) =>
-                    handleInputChange("protected", e.target.checked)
-                  }
+                  onChange={(e) => {
+                    handleInputChange("protected", e.target.checked);
+                    if (e.target.checked) {
+                      if (formData.public) {
+                        handleInputChange("public", false);
+                      }
+                    }
+                  }}
                 />
               }
               label="Protected"
@@ -146,6 +157,22 @@ const GallerySettings: React.FC<GallerySettingsProps> = ({
                 />
               }
               label="Reminder"
+            />
+          </FormGroup>
+        </FormControl>
+        <FormControl sx={{ mt: 1 }}>
+          <FormLabel>Customization</FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.hero_enabled || false}
+                  onChange={(e) =>
+                    handleInputChange("hero_enabled", e.target.checked)
+                  }
+                />
+              }
+              label="Hero Image"
             />
           </FormGroup>
         </FormControl>

@@ -1138,7 +1138,7 @@ const docTemplate = `{
                         "name": "payload",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserUpdate"
                         }
                     }
                 ],
@@ -1261,6 +1261,10 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "hero_enabled": {
+                    "description": "HeroEnabled will determine if the gallery has a featured image landing page",
+                    "type": "boolean"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1323,6 +1327,9 @@ const docTemplate = `{
                 },
                 "featured_image_id": {
                     "type": "integer"
+                },
+                "hero_enabled": {
+                    "type": "boolean"
                 },
                 "live": {
                     "type": "string"
@@ -1462,6 +1469,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserUpdate": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

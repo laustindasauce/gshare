@@ -34,7 +34,7 @@ docker build -f client.Dockerfile -t gshare-client .
 Now, using the images we just built we can run them with Docker. At this point I would recommend following the [Docker Compose](./docker.md) instructions and just swapping the image to the ones you built locally. However, if you prefer to run with vanilla Docker you can do that with the commands below.
 
 ```bash title="Run server"
-docker run -d -p 8080:8080 \
+docker run -d -p 8323:8323 \
 --env-file .env \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v ./gshare_images:/app/images \

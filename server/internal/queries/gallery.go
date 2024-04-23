@@ -158,6 +158,9 @@ func (r *galleryRepository) UpdateGallery(gallery *models.Gallery, updateGallery
 			gallery.ReminderEmails = updateGallery.ReminderEmails
 		}
 	}
+	if updateGallery.HeroEnabled != nil {
+		gallery.HeroEnabled = *updateGallery.HeroEnabled
+	}
 
 	// Save the Changes and return the resulting error or nil
 	return r.db.Save(&gallery).Error

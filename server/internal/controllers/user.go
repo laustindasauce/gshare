@@ -22,6 +22,25 @@ import (
 func CreateFirstUser(c *fiber.Ctx) error {
 	user := new(models.User)
 
+	userQueries := queries.NewUserRepository()
+
+	userCount, err := userQueries.GetUserCount()
+	if err != nil {
+		log.Errorf("Unable to retrieve the number of users in DB: %v\n", err)
+		return fiber.NewError(fiber.StatusNotFound, "No users found in the DB")
+	}
+
+	if userCount != 0 {
+		log.Error("Admin user already exists.")
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIResponse{
+			Status: "fail",
+			Data: fiber.Map{
+				"issue": "Admin user already exists.",
+			},
+		})
+	}
+
 	// I need to log what the body of the request is as json formatted
 	var requestBody map[string]interface{}
 	if err := json.Unmarshal(c.Body(), &requestBody); err != nil {
@@ -48,8 +67,6 @@ func CreateFirstUser(c *fiber.Ctx) error {
 	}
 
 	log.Debugf("New admin user: %v\n", user)
-
-	userQueries := queries.NewUserRepository()
 
 	if err := userQueries.CreateNewUser(user); err != nil {
 		log.Errorf("Unable to add new user to DB: %v\n", err)

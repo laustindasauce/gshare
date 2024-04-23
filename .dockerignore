@@ -1,8 +1,0 @@
-tmp
-node_modules
-.env
-.env.example
-.gitignore
-README.md
-start_dev.sh
-.woodpecker

@@ -1,6 +1,6 @@
 import { formatPath } from "@/helpers/format";
 import api from "@/lib/api";
-import { GalleryModel } from "@/lib/models";
+import { GalleryModel, NewGalleryModel } from "@/lib/models";
 import { Settings } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
 import {
@@ -43,6 +43,7 @@ const NewGalleryDialog = ({ open, handleClose, handleCreated }: Props) => {
   const [isPublic, setPublic] = React.useState(false);
   const [reminder, setReminder] = React.useState(false);
   const [reminderEmails, setReminderEmails] = React.useState<String | null>();
+  const [heroEnabled, setHeroEnabled] = React.useState(true);
 
   const [isProtected, setProtected] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
@@ -59,6 +60,12 @@ const NewGalleryDialog = ({ open, handleClose, handleCreated }: Props) => {
     setTitle("");
     setPath("");
     setPublic(false);
+    setReminder(false);
+    setReminderEmails(null);
+    setHeroEnabled(true);
+    setProtected(false);
+    setShowPassword(false);
+    setPassword(null);
     setLoading(false);
     setErrorMsg("");
   };
@@ -82,7 +89,12 @@ const NewGalleryDialog = ({ open, handleClose, handleCreated }: Props) => {
               live: live.toDate(),
               public: isPublic,
               expiration: expiration.toDate(),
-            })
+              protected: isProtected,
+              password,
+              reminder,
+              reminder_emails: reminderEmails,
+              hero_enabled: heroEnabled,
+            } as NewGalleryModel)
             .then((res) => {
               clean();
               setLoading(false);
@@ -266,6 +278,21 @@ const NewGalleryDialog = ({ open, handleClose, handleCreated }: Props) => {
                 />
               </>
             )}
+            <br />
+            <FormControl sx={{ mt: 1 }}>
+              <FormLabel>Customization</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={heroEnabled}
+                      onChange={(e) => setHeroEnabled(e.target.checked)}
+                    />
+                  }
+                  label="Hero Image"
+                />
+              </FormGroup>
+            </FormControl>
           </React.Fragment>
         )}
 

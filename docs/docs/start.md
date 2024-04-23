@@ -16,7 +16,7 @@ You can access the web app admin pages by going to `http://machine-ip:3000/admin
 Once you have accessed the admin page, you should be able to create your admin account.
 
 :::info Admin Creation
-This will only be available while there isn't a user created. Once the admin user has been created you will no have the ability to create a new account.
+This will only be available while there isn't a user created. Once the admin user has been created you will no longer have the ability to create a new account.
 :::
 
 ![create admin](https://i.imgur.com/AZHPxoI.png)
@@ -33,4 +33,7 @@ Once you have a gallery created you can [upload images](./administration/gallery
 
 ## Next Steps
 
-You can refine your configuration and environment variables and redeploy for production. You can also deploy a live gallery which is visible to the public!
+- Refine your configuration and environment variables and redeploy for production.
+- Deploy a live gallery which is visible to the public!
+- Experiment with the Redis cache option.
+- Consider your preferred database (SQLite or PostreSQL)
