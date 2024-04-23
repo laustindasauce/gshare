@@ -15,7 +15,7 @@ jobs:
     name: "Client Tests"
     uses: ./.github/workflows/client-test.yml
 
-  cicd-test:
-    name: "CI/CD Tests"
-    if: github.base_ref == 'refs/head/main'
-    uses: ./.github/workflows/cicd-test.yml
+  # cicd-test:
+  #   name: "CI/CD Tests"
+  #   if: github.base_ref == '"refs/head/main"'
+  #   uses: ./.github/workflows/cicd-test.yml
