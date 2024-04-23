@@ -35,12 +35,6 @@ func Difference(a, b []string) []string {
 	return diff
 }
 
-// Remove element at given index from slice and keep order
-func Remove(s []int, i int) []int {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
-}
-
 // Generate a random string for oauth2.0 state
 func GenerateRandomState(length *int) string {
 	b := make([]byte, 32) // 32 bytes will produce 43 characters when encoded to base64

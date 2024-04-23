@@ -1,0 +1,16 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  server-tests:
+    name: "Server Tests"
+    uses: ./.github/workflows/server-test.yml
+
+  client-tests:
+    name: "Client Tests"
+    uses: ./.github/workflows/client-test.yml
