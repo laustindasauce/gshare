@@ -1,10 +1,9 @@
 #
 name: Test build Docker images
 
-# Configures this workflow to run every time a new semantic versioned tag is pushed
+# Configures as a resuable workflow
 on:
-  pull_request:
-    branches: [main]
+  workflow_call:
 
 # Defines three custom environment variables for the workflow.
 # These are used for the Container registry domain, a name for the Docker image that this workflow builds, and the platforms to build the Docker images for.
