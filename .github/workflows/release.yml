@@ -18,12 +18,16 @@ env:
 # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
 permissions:
   contents: read
-  packages: write
+  packages: write # to deploy packages
+  pages: write # to deploy to Pages
+  id-token: write # to verify the deployment originates from an appropriate source
 
 jobs:
   # Job to deploy docs site
   deploy-docs:
     name: "Deploy Docs Site"
+    # Only run on tag push
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     uses: ./.github/workflows/deploy-docs.yml
 
   # Job to build the Docker images
