@@ -1,0 +1,38 @@
+name: Clean up Docker container versions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0" # Runs every Sunday at midnight
+
+# Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run cleanup script
+        run: |
+          #!/bin/bash
+          container="mycontainer"
+          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" # Automatically provided by GitHub Actions
+          user="austinbspencer"
+          # user="orgs/myorganization"
+          page=1
+
+          while read -r id; do
+            echo $id
+            if [ "${id}" = "" ]
+            then
+              echo "There are no dangling images to remove for ${user}/${container}"
+              exit 0
+            fi
+            curl -H "Authorization: Bearer ${GITHUB_TOKEN}" -X DELETE "https://api.github.com/${user}/packages/container/${container}/versions/${id}";
+          done <<< "$(curl -s "https://api.github.com/${user}/packages/container/${container}/versions?page=${page}&per_page=100" -H "Authorization: Bearer ${GITHUB_TOKEN}" | jq -r '.[] | select(.metadata.container.tags==[]) | .id')"
