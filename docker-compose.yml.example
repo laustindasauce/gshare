@@ -19,6 +19,8 @@ services:
     container_name: gshare-client
     ports:
       - 3000:3000
+    depends_on:
+      - server
   server:
     <<: *gshare-container
     image: ghcr.io/austinbspencer/gshare-server:latest
