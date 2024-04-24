@@ -14,7 +14,6 @@ on:
 env:
   REGISTRY: ghcr.io
   PLATFORMS: linux/amd64,linux/arm64
-  BUILD_CACHE: gshare-build-cache
 
 # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
 permissions:
@@ -87,8 +86,7 @@ jobs:
         with:
           context: ${{ matrix.context }}
           push: true
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.BUILD_CACHE }}:${{matrix.image}}
-          cache-to: type=registry,mode=max,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.BUILD_CACHE }}:${{ matrix.image }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{matrix.image}}:develop
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ env.PLATFORMS }}
