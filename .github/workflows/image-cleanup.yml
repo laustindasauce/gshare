@@ -11,28 +11,27 @@ permissions:
   packages: write
 
 jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-
+  cleanup-untagged-images:
+    name: Cleanup Untagged Images Tags for ${{ matrix.image }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: "gshare-server"
+          - image: "gshare-client"
+          # - image: "gshare-build-cache"
+    env:
+      # Requires a personal access token with the OAuth scope delete:packages
+      TOKEN: ${{ secrets.PAT_DELETE_PACKAGES }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run cleanup script
-        run: |
-          #!/bin/bash
-          container="mycontainer"
-          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" # Automatically provided by GitHub Actions
-          user="austinbspencer"
-          # user="orgs/myorganization"
-          page=1
-
-          while read -r id; do
-            echo $id
-            if [ "${id}" = "" ]
-            then
-              echo "There are no dangling images to remove for ${user}/${container}"
-              exit 0
-            fi
-            curl -H "Authorization: Bearer ${GITHUB_TOKEN}" -X DELETE "https://api.github.com/${user}/packages/container/${container}/versions/${id}";
-          done <<< "$(curl -s "https://api.github.com/${user}/packages/container/${container}/versions?page=${page}&per_page=100" -H "Authorization: Bearer ${GITHUB_TOKEN}" | jq -r '.[] | select(.metadata.container.tags==[]) | .id')"
+      - name: Clean untagged images
+        # Confirm token exists
+        if: "${{ env.TOKEN != '' }}"
+        uses: stumpylog/image-cleaner-action/untagged@v0.6.0
+        with:
+          token: "${{ env.TOKEN }}"
+          owner: "austinbspencer"
+          do_delete: "true"
+          is_org: "true"
+          package_name: "${{ matrix.image }}"
