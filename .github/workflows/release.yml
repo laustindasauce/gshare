@@ -14,6 +14,7 @@ on:
 env:
   REGISTRY: ghcr.io
   PLATFORMS: linux/amd64,linux/arm64
+  BUILD_CACHE: gshare-build-cache
 
 # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
 permissions:
@@ -75,6 +76,11 @@ jobs:
             # Use auto latest to generate semver tags and latest
             latest=auto
 
+      - name: Determine build cache output
+        id: cache-target
+        run: |
+          echo "cache-to=type=registry,mode=max,ref=ghcr.io/${{ github.repository_owner }}/${{ env.BUILD_CACHE }}:${{ matrix.image }}" >> $GITHUB_OUTPUT
+
       - name: Create version file
         run: echo "${{ github.ref_name }}" > ${{ matrix.context }}/version
 
@@ -86,6 +92,8 @@ jobs:
         with:
           context: ${{ matrix.context }}
           push: true
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ env.BUILD_CACHE }}:${{matrix.image}}
+          cache-to: ${{ steps.cache-target.outputs.cache-to }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ env.PLATFORMS }}
