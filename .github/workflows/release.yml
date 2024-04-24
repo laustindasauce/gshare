@@ -1,12 +1,12 @@
 #
-name: Create and publish Docker images
+name: Handle Release
 
 # Configures this workflow to run every time a new semantic versioned tag is pushed
 on:
   push:
     # Publish develop branch
     branches: develop
-    # Publish semver tags as releases.
+    # Publish semver tags
     tags: "v*.*.*"
 
 # Defines two custom environment variables for the workflow.
@@ -18,11 +18,20 @@ env:
 # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
 permissions:
   contents: read
-  packages: write
+  packages: write # to deploy packages
+  pages: write # to deploy to Pages
+  id-token: write # to verify the deployment originates from an appropriate source
 
 jobs:
-  # Job to build the Docker image for the server
-  build-and-push-server-image:
+  # Job to deploy docs site
+  deploy-docs:
+    name: "Deploy Docs Site"
+    # Only run on tag push
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    uses: ./.github/workflows/deploy-docs.yml
+
+  # Job to build the Docker images
+  build-and-push:
     runs-on: ubuntu-latest
     strategy:
       # Prevent a failure in one image from stopping the other builds

@@ -1,4 +1,4 @@
-name: Pull Request CI
+name: Pull Request Tests
 
 on:
   pull_request:
@@ -14,3 +14,7 @@ jobs:
   client-tests:
     name: "Client Tests"
     uses: ./.github/workflows/client-test.yml
+
+  docs-tests:
+    name: "Docs Tests"
+    uses: ./.github/workflows/deploy-docs-test.yml
