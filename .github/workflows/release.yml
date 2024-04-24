@@ -18,7 +18,9 @@ env:
 # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
 permissions:
   contents: read
-  packages: write
+  packages: write # to deploy packages
+  pages: write # to deploy to Pages
+  id-token: write # to verify the deployment originates from an appropriate source
 
 jobs:
   # Job to deploy docs site
