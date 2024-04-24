@@ -1,0 +1,37 @@
+name: Clean up Docker container versions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0" # Runs every Sunday at midnight
+
+# Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup-untagged-images:
+    name: Cleanup Untagged Images Tags for ${{ matrix.image }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: "gshare-server"
+          - image: "gshare-client"
+          # - image: "gshare-build-cache"
+    env:
+      # Requires a personal access token with the OAuth scope delete:packages
+      TOKEN: ${{ secrets.PAT_DELETE_PACKAGES }}
+    steps:
+      - name: Clean untagged images
+        # Confirm token exists
+        if: "${{ env.TOKEN != '' }}"
+        uses: stumpylog/image-cleaner-action/untagged@v0.6.0
+        with:
+          token: "${{ env.TOKEN }}"
+          owner: "austinbspencer"
+          do_delete: "true"
+          is_org: "false"
+          package_name: "${{ matrix.image }}"
