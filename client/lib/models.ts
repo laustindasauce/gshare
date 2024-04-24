@@ -77,6 +77,7 @@ export interface GalleryModel {
   zips_ready: boolean;
   reminder: boolean;
   reminder_emails: string | null;
+  hero_enabled: boolean;
   events: EventModel[];
 }
 
@@ -92,6 +93,7 @@ export interface GalleryUpdateModel {
   featured_image_id?: number | null;
   reminder?: boolean | null;
   reminder_emails?: string | null;
+  hero_enabled?: boolean | null;
 }
 
 export interface NewGalleryModel {
@@ -101,6 +103,11 @@ export interface NewGalleryModel {
   live: Date;
   public: boolean;
   expiration: Date;
+  protected: boolean;
+  password: string | null;
+  reminder: boolean;
+  reminder_emails: string | null;
+  hero_enabled: boolean;
 }
 
 export interface Event {

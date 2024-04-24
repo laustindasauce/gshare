@@ -28,7 +28,7 @@ const Footer = (props: Props) => {
       {props.layout === "admin" ? (
         <Grid sx={{ mt: 2 }} item xs="auto">
           <Typography variant="caption">
-            gshare v{process.env.APP_VERSION}
+            gshare {process.env.APP_VERSION}
           </Typography>
         </Grid>
       ) : process.env.NEXT_PUBLIC_POWERED_BY_ENABLED?.toLowerCase() !==

@@ -9,6 +9,7 @@ import {
   Paper,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { GalleryModel } from "@/lib/models";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
@@ -22,6 +23,7 @@ import { randomFeaturedImage } from "@/helpers/gallery";
 import DefaultLayout from "@/layouts/DefaultLayout";
 import { getImageBlurURL } from "@/helpers/photos";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 interface IParams extends ParsedUrlQuery {
   path: string;
@@ -38,18 +40,25 @@ const ClientGalleryHandler = (props: Props) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [locked, setLocked] = React.useState(props.locked);
-  const [heroEnabled, setHeroEnabled] = React.useState(true);
+  const router = useRouter();
+  const { p } = router.query;
 
   React.useEffect(() => {
-    if (
-      process.env.NEXT_PUBLIC_GALLERY_HERO_ENABLED &&
-      process.env.NEXT_PUBLIC_GALLERY_HERO_ENABLED.toLowerCase() === "false"
-    ) {
-      return setHeroEnabled(false);
+    if (typeof p === "string") {
+      setLoading(true);
+      api
+        .unlockGallery(props.gallery.path, p)
+        .then(() => {
+          setLocked(false);
+          setError(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setError(true);
+        })
+        .finally(() => setLoading(false));
     }
-
-    setHeroEnabled(true);
-  }, []);
+  }, [p, props.gallery.path]);
 
   const checkPassword = (pass: string) => {
     setLoading(true);
@@ -92,23 +101,20 @@ const ClientGalleryHandler = (props: Props) => {
             }
           />
         </Head>
-        {heroEnabled && (
-          <HeroImage
-            img={props.gallery.featured_image}
-            title={props.gallery.title}
-            padding={0}
-          />
-        )}
         <Backdrop
           sx={{
             color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            backdropFilter: "blur(10px)",
+            // zIndex: (theme) => theme.zIndex.drawer + 1,
+            // backdropFilter: "blur(10px)",
           }}
           open={locked}
         >
           <Container maxWidth="sm">
             <Paper sx={{ p: 4, width: "100%" }}>
+              <Typography mb={3} variant="body1">
+                This gallery is private. Please enter the password to access the
+                photos.
+              </Typography>
               {error && (
                 <Alert
                   sx={{ mb: 2 }}
@@ -170,7 +176,7 @@ const ClientGalleryHandler = (props: Props) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {heroEnabled && (
+      {props.gallery.hero_enabled && (
         <HeroImage
           img={props.gallery.featured_image}
           title={props.gallery.title}
@@ -178,7 +184,7 @@ const ClientGalleryHandler = (props: Props) => {
         />
       )}
       <Container maxWidth={false} id="gallery-header">
-        <GalleryHeader heroEnabled={heroEnabled} gallery={props.gallery} />
+        <GalleryHeader gallery={props.gallery} />
         <GalleryHandler
           galleryID={props.gallery.ID}
           photos={props.gallery.images}
@@ -211,15 +217,6 @@ export const getStaticProps: GetStaticProps = async (
     try {
       const res = await api.getGallery(path);
       let locked = res.data.protected;
-      // If the gallery is protected & query password is given check if we should unlock
-      // if (locked) {
-      //   try {
-      //     await api.unlockGallery(res.data.path, p);
-      //     locked = false;
-      //   } catch (error) {
-      //     console.error(error);
-      //   }
-      // }
 
       res.data.featured_image =
         res.data.featured_image.ID === 0

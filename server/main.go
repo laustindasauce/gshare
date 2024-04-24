@@ -74,7 +74,7 @@ func startServerWithGracefulShutdown(a *fiber.App) {
 	}()
 
 	// Run server.
-	if err := a.Listen("0.0.0.0:8081"); err != nil {
+	if err := a.Listen("0.0.0.0:8323"); err != nil {
 		log.Errorf("Oops... Server is not running! Reason: %v", err)
 	}
 

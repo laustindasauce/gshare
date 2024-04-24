@@ -45,6 +45,8 @@ type Gallery struct {
 	// ZipsReady will track if the zip files are created and up to date
 	// If a new image is uploaded/deleted since zips were created will switch to false
 	ZipsReady bool `json:"zips_ready" gorm:"not null"`
+	// HeroEnabled will determine if the gallery has a featured image landing page
+	HeroEnabled bool `json:"hero_enabled" gorm:"not null;default:true"`
 	// All events related to this gallery
 	Events []Event `json:"events" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:GalleryID"`
 }
@@ -62,6 +64,7 @@ type GalleryUpdate struct {
 	FeaturedImageID *uint      `json:"featured_image_id"`
 	Reminder        *bool      `json:"reminder"`
 	ReminderEmails  *string    `json:"reminder_emails"`
+	HeroEnabled     *bool      `json:"hero_enabled"`
 }
 
 // Used to handle unlocking the gallery for clients

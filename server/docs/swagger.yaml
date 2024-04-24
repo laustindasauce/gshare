@@ -71,6 +71,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/models.Image'
         description: Featured image for the gallery
+      hero_enabled:
+        description: HeroEnabled will determine if the gallery has a featured image
+          landing page
+        type: boolean
       id:
         type: integer
       images:
@@ -124,6 +128,8 @@ definitions:
         type: string
       featured_image_id:
         type: integer
+      hero_enabled:
+        type: boolean
       live:
         type: string
       password:
@@ -220,6 +226,13 @@ definitions:
       password:
         type: string
       updatedAt:
+        type: string
+    type: object
+  models.UserUpdate:
+    properties:
+      email:
+        type: string
+      password:
         type: string
     type: object
   time.Duration:
@@ -931,7 +944,7 @@ paths:
         in: body
         name: payload
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.UserUpdate'
       produces:
       - application/json
       responses:
