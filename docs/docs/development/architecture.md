@@ -11,7 +11,7 @@ There is only the single client for gshare currently which is a `web app`. The w
 
 ### Web App
 
-The web app is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Next.js](https://nextjs.org/) framework along with [Material UI](https://mui.com/material-ui/getting-started/) as a component library.
+The web app is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Next.js](https://nextjs.org/) framework along with [Material UI](https://mui.com/material-ui/getting-started/) as a component library. Additionally, we are using [PNPM](https://pnpm.io/) as our package manager.
 
 ## Server
 
