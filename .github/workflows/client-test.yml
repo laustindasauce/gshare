@@ -16,14 +16,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v3
         with:
-          node-version: 18
-          cache: yarn
-          cache-dependency-path: client/yarn.lock
+          version: 9.0.5
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --shamefully-hoist
 
       - name: Run Lint
-        run: yarn lint:ci
+        run: pnpm lint:ci
