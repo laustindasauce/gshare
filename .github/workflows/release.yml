@@ -12,7 +12,7 @@ on:
 # Defines two custom environment variables for the workflow.
 # These are used for the Container registry domain and the platforms to build the Docker images for.
 env:
-  REGISTRY: ${{ env.REGISTRY }}
+  REGISTRY: ghcr.io
   PLATFORMS: linux/amd64,linux/arm64
   BUILD_CACHE: gshare-build-cache
 
