@@ -19,6 +19,6 @@ for VAR in "${REQUIRED_VARIABLES[@]}"; do
     fi
 done
 
-yarn build
+pnpm build
 
-yarn start
+pnpm start
