@@ -10,7 +10,8 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+# Adding timeout to resolve: https://github.com/yarnpkg/yarn/issues/4890
+RUN yarn install --frozen-lockfile --network-timeout 100000
 
 ####### Production Image #######
 FROM base AS runner

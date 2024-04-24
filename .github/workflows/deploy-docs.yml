@@ -1,8 +1,9 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
+  # Enable deploying docs manually
+  workflow_dispatch:
 
 jobs:
   build:
