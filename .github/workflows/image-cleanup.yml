@@ -20,7 +20,7 @@ jobs:
         include:
           - image: "gshare-server"
           - image: "gshare-client"
-          # - image: "gshare-build-cache"
+          - image: "gshare-build-cache"
     env:
       # Requires a personal access token with the OAuth scope delete:packages
       TOKEN: ${{ secrets.PAT_DELETE_PACKAGES }}
