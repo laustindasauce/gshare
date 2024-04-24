@@ -33,5 +33,5 @@ jobs:
           token: "${{ env.TOKEN }}"
           owner: "austinbspencer"
           do_delete: "true"
-          is_org: "true"
+          is_org: "false"
           package_name: "${{ matrix.image }}"
