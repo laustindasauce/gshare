@@ -26,6 +26,8 @@ jobs:
   # Job to deploy docs site
   deploy-docs:
     name: "Deploy Docs Site"
+    # Only run on tag push
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     uses: ./.github/workflows/deploy-docs.yml
 
   # Job to build the Docker images
