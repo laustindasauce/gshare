@@ -66,6 +66,7 @@ When using Redis for cache -- If you download the zip for a gallery that respons
 | SWAGGER_PROTOCOL                    | `http,https`                                     | no       |
 | TZ                                  | `UTC`                                            | no       |
 | TWO_FACTOR_AUTHENTICATION           | `false`                                          | no       |
+| CACHE_ENABLED                       | `true`                                           | no       |
 | CACHE_DRIVER                        | `memory`                                         | no       |
 | REDIS_HOST                          | `localhost`                                      | no       |
 | REDIS_HOST                          | `6379`                                           | no       |
