@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "gshare API Support",
-            "email": "gshare@austinbspencer.com"
+            "email": "austin.spencer2097@gmail.com"
         },
         "version": "{{.Version}}"
     },

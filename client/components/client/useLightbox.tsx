@@ -41,7 +41,6 @@ export default function useLightbox() {
               open={dlPrompt}
               fileName={dlImage.download as string}
               handleClose={() => {
-                console.log("close");
                 setDlImage(null);
                 setDlPrompt(false);
               }}
