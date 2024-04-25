@@ -26,7 +26,7 @@ const FeaturedImage = ({ photo, maxHeight, maxWidth }: Props) => {
           id={`img-${ID}`}
           alt={`img-${ID}`}
           src={getImageSrc(ID)}
-          quality="42"
+          quality={Number(process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY || 40)}
           height={imageSize.height || 200}
           width={imageSize.width || 300}
           placeholder={`data:image/svg+xml;base64,${toBase64(

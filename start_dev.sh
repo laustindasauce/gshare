@@ -5,11 +5,11 @@ cd client
 # Set version
 touch version
 echo "vx.x.x" > version
-yarn install
+pnpm install
 wait $!
 
 echo "Starting Next.js development server..."
-yarn dev &
+pnpm dev &
 
 echo "Starting Golang API with 'air'..."
 cd ../server

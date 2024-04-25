@@ -75,6 +75,13 @@ export const getZipDownloadURL = (galleryId: number, size: string) =>
 export const getImageSrc = (ID: number) =>
   `${process.env.NEXT_PUBLIC_API_URL}/api/v1/images/${ID}`;
 
+export const getImageFullSrc = (
+  ID: number,
+  width: number | string,
+  quality: number
+) =>
+  `${process.env.NEXT_PUBLIC_API_URL}/api/v1/images/${ID}/${width}/${quality}`;
+
 export const getImageBlurURL = (ID: number, width: number, quality: number) =>
   `${process.env.NEXT_PUBLIC_API_URL}/api/v1/images/${ID}/${width}/${quality}`;
 

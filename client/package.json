@@ -26,6 +26,7 @@
     "@types/react-dom": "18.2.25",
     "aos": "^2.3.4",
     "axios": "^1.6.8",
+    "clsx": "^2.1.1",
     "cookies-next": "^4.1.1",
     "dayjs": "^1.11.10",
     "eslint": "^8.41.0",
@@ -33,7 +34,6 @@
     "next": "14.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-photo-album": "^2.3.1",
     "swr": "^2.2.5",
     "typescript": "5.4.5",
     "yet-another-react-lightbox": "^3.17.3"
