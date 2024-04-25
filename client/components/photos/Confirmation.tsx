@@ -15,12 +15,12 @@ import {
   shimmer,
   toBase64,
 } from "@/helpers/photos";
-import { Photo } from "react-photo-album";
+import { Photo as PhotoModel } from "@/lib/models";
 
 type Props = {
   handleClose: (arg1: boolean, arg2: string) => void;
   open: boolean;
-  image: Photo;
+  image: PhotoModel;
 };
 
 const Confirmation = ({ open, handleClose, image }: Props) => {
@@ -28,7 +28,7 @@ const Confirmation = ({ open, handleClose, image }: Props) => {
   const deleteImage = async () => {
     try {
       setLoading(true);
-      const res = await api.deleteImage(Number(image.alt));
+      const res = await api.deleteImage(image.ID);
       setLoading(false);
       handleClose(true, res.data);
     } catch (error) {
@@ -56,8 +56,8 @@ const Confirmation = ({ open, handleClose, image }: Props) => {
         <Stack direction="row" justifyContent="center">
           <Image
             alt={"image to delete"}
-            src={getImageSrc(Number(image.alt))}
-            quality="42"
+            src={getImageSrc(image.ID)}
+            quality={Number(process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY || 40)}
             height={imgSize.height}
             width={imgSize.width}
             placeholder={`data:image/svg+xml;base64,${toBase64(
