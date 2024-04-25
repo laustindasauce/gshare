@@ -77,7 +77,6 @@ export default Home;
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext
 ) => {
-  console.log("test");
   const enabled = process.env.NEXT_PUBLIC_HOMEPAGE_ENABLED;
   // Default to true if not set
   if (!enabled || enabled.toLowerCase() === "true") {
