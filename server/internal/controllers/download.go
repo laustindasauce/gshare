@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -98,26 +98,14 @@ func DownloadImage(c *fiber.Ctx) error {
 // @Summary      download any number of images in a gallery
 // @Tags         Download
 // @Produce      json
-// @Param        size      path       string  true  "Image Size"
-// @Param        imageID   path       string  true  "Comma separated Image IDs"
+// @Param        size      path     string  			true   "Image Size"
+// @Param   	 payload   body		models.BulkSelect   false  "List of image IDs"
 // @Success      200        {object}  models.Image
-// @Router       /v1/download/{size}/images/{imageIDs} [get]
+// @Router       /v1/download/{size}/images [post]
 func DownloadImages(c *fiber.Ctx) error {
 	// Read the param imageID
 	size := strings.ToLower(c.Params("size"))
-	imageIDsParam := c.Params("imageIDs")
 	imageSize := models.ImageSize(size)
-
-	imageIDsStr := strings.Split(imageIDsParam, ",")
-	var imageIDs []uint
-	for _, id := range imageIDsStr {
-		uintId, err := strconv.ParseUint(id, 10, 64)
-		if err != nil {
-			log.Errorf("Invalid image ID given to download: %v\n", err)
-			continue
-		}
-		imageIDs = append(imageIDs, uint(uintId))
-	}
 
 	// Check the given size is valid
 	if !models.ValidImageSize(imageSize) {
@@ -129,12 +117,50 @@ func DownloadImages(c *fiber.Ctx) error {
 		})
 	}
 
+	// I need to log what the body of the request is as json formatted
+	var requestBody map[string]interface{}
+	if err := json.Unmarshal(c.Body(), &requestBody); err != nil {
+		return err // Handle error if unable to unmarshal JSON
+	}
+
+	// Log the request body as pretty-printed JSON
+	requestBodyJSON, err := json.MarshalIndent(requestBody, "", "  ")
+	if err != nil {
+		return err // Handle error if unable to marshal JSON
+	}
+	log.Debugf("Request Body:\n%s\n", requestBodyJSON)
+
+	bulkSelect := new(models.BulkSelect)
+
+	// Store the body in the event and return error if encountered
+	if err := c.BodyParser(bulkSelect); err != nil {
+		log.Errorf("Unable to parse new event: %v\n", err)
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIResponse{
+			Status: "fail",
+			Data: fiber.Map{
+				"issue": err.Error(),
+			},
+		})
+	}
+
+	if len(bulkSelect.IDs) == 0 {
+		log.Warn("No image IDs given in bulk download request.")
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(models.APIResponse{
+			Status: "fail",
+			Data: fiber.Map{
+				"issue": "Missing image IDs to download.",
+			},
+		})
+	}
+
 	imageQueries := queries.NewImageRepository()
 
-	specificImages, err := imageQueries.GetSpecificImages(imageIDs)
+	specificImages, err := imageQueries.GetSpecificImages(bulkSelect.IDs)
 	if err != nil {
-		log.Errorf("Unable to find image requested for download: %v\n", err)
-		return fiber.NewError(fiber.StatusNotFound, "No image with the given ID")
+		log.Errorf("Unable to retrieve images requested for download: %v\n", err)
+		return fiber.NewError(fiber.StatusBadRequest, "Unable to find images for download.")
 	}
 
 	if len(specificImages) == 0 {

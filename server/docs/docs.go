@@ -261,8 +261,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/download/{size}/images/{imageIDs}": {
-            "get": {
+        "/v1/download/{size}/images": {
+            "post": {
                 "description": "Download multiple images by ID.",
                 "produces": [
                     "application/json"
@@ -280,11 +280,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Comma separated Image IDs",
-                        "name": "imageID",
-                        "in": "path",
-                        "required": true
+                        "description": "List of image IDs",
+                        "name": "payload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/models.BulkSelect"
+                        }
                     }
                 ],
                 "responses": {
@@ -1186,6 +1187,17 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string"
+                }
+            }
+        },
+        "models.BulkSelect": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

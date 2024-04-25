@@ -12,6 +12,6 @@ func DownloadPublicRoutes(a *fiber.App) {
 	download := route.Group("/download/:size")
 
 	download.Get("/image/:imageID", controllers.DownloadImage)
-	download.Get("/image/:imageIDs", controllers.DownloadImages)
 	download.Get("/gallery/:galleryID", controllers.DownloadGallery)
+	download.Post("/images", controllers.DownloadImages)
 }

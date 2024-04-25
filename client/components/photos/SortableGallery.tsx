@@ -1,225 +1,100 @@
-import * as React from "react";
-import { Photo, PhotoAlbum, RenderPhotoProps } from "react-photo-album";
+import React from "react";
 import {
-  Photo as PhotoModel,
-  SnacksModel,
-  SortablePhotoModel,
-} from "@/lib/models";
-import clsx from "clsx";
+  Alert,
+  ImageList,
+  Snackbar,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+
 import {
-  closestCenter,
   DndContext,
-  DragEndEvent,
-  DragOverlay,
-  DragStartEvent,
-  KeyboardSensor,
+  closestCenter,
   MouseSensor,
   TouchSensor,
-  UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
-
-import { getImageSrc, shimmer, toBase64 } from "@/helpers/photos";
-import Image from "next/image";
-import api from "@/lib/api";
-import Snacks from "../global/Snacks";
 import { LoadingButton } from "@mui/lab";
-
-interface SortablePhoto extends Photo {
-  id: UniqueIdentifier;
-}
-
-type SortablePhotoProps = RenderPhotoProps<SortablePhoto>;
-
-type PhotoFrameProps = SortablePhotoProps & {
-  overlay?: boolean;
-  active?: boolean;
-  insertPosition?: "before" | "after";
-  attributes?: Partial<React.HTMLAttributes<HTMLDivElement>>;
-  listeners?: Partial<React.HTMLAttributes<HTMLDivElement>>;
-};
-
-const PhotoFrame = React.memo(
-  React.forwardRef<HTMLDivElement, PhotoFrameProps>(function PhotoFrame(
-    props,
-    ref
-  ) {
-    const {
-      layoutOptions,
-      imageProps,
-      overlay,
-      active,
-      insertPosition,
-      attributes,
-      listeners,
-      photo,
-      wrapperStyle,
-    } = props;
-    const { alt, style, src, height, width, ...restImageProps } = imageProps;
-
-    return (
-      <div
-        ref={ref}
-        style={{ ...wrapperStyle, position: "relative" }}
-        className={clsx("photo-frame", {
-          overlay: overlay,
-          active: active,
-          insertBefore: insertPosition === "before",
-          insertAfter: insertPosition === "after",
-        })}
-        {...attributes}
-        {...listeners}
-      >
-        <Image
-          className="img-link"
-          fill
-          alt={alt}
-          src={photo}
-          draggable={true}
-          placeholder={`data:image/svg+xml;base64,${toBase64(
-            shimmer(photo.width, photo.height)
-          )}`}
-          quality="75"
-          loading="lazy"
-        />
-      </div>
-    );
-  })
-);
-
-function SortablePhotoFrame(
-  props: SortablePhotoProps & { activeIndex?: number }
-) {
-  const { photo, activeIndex } = props;
-  const { attributes, listeners, isDragging, index, over, setNodeRef } =
-    useSortable({ id: photo.id });
-
-  return (
-    <PhotoFrame
-      ref={setNodeRef}
-      active={isDragging}
-      insertPosition={
-        activeIndex !== undefined && over?.id === photo.id && !isDragging
-          ? index > activeIndex
-            ? "after"
-            : "before"
-          : undefined
-      }
-      aria-label="sortable image"
-      attributes={attributes}
-      listeners={listeners}
-      {...props}
-    />
-  );
-}
+import { Photo } from "@/lib/models";
+import api from "@/lib/api";
+import SortableImage from "./SortableImage";
 
 type Props = {
+  images: Photo[];
   galleryID: number;
-  images: PhotoModel[];
 };
 
-export default function SortableGallery(props: Props) {
-  const [photos, setPhotos] = React.useState(
-    props.images.map(
-      (photo) =>
-        ({
-          id: photo.ID,
-          src: getImageSrc(photo.ID),
-          width: photo.width,
-          height: photo.height,
-          alt: `${photo.ID}`,
-          key: `${photo.gallery_id}`,
-          blurDataURL: `data:image/svg+xml;base64,${toBase64(
-            shimmer(photo.width, photo.height)
-          )}`,
-          download: photo.filename,
-        } as SortablePhotoModel)
-    )
-  );
-  const renderedPhotos = React.useRef<{ [key: string]: SortablePhotoProps }>(
-    {}
-  );
-  const [activeId, setActiveId] = React.useState<UniqueIdentifier>();
-  const activeIndex = activeId
-    ? photos.findIndex((photo) => photo.id === activeId)
-    : undefined;
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, {
-      activationConstraint: { delay: 50, tolerance: 10 },
-    }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
+const SortableGallery = (props: Props) => {
+  const [snackbar, setSnackbar] = React.useState<any>(null);
+  const handleCloseSnackbar = () => setSnackbar(null);
 
   const [warned, setWarned] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const [snackbar, setSnackbar] = React.useState<SnacksModel>({
-    open: false,
-    severity: "success",
-    locked: false,
-    message: "",
-  });
+  const [photos, setPhotos] = React.useState(props.images.map((s) => s.ID));
 
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only("xs"));
+  const isSm = useMediaQuery(theme.breakpoints.only("sm"));
+  const isMd = useMediaQuery(theme.breakpoints.only("md"));
+  const isLg = useMediaQuery(theme.breakpoints.only("lg"));
+  const getCols = () => {
+    let cols = 5;
+    if (isXs) {
+      cols = 2;
+    } else if (isSm) {
+      cols = 3;
+    } else if (isMd) {
+      cols = 4;
+    } else if (isLg) {
+      cols = 4;
+    }
+
+    return cols;
   };
 
-  const handleDragStart = React.useCallback(
-    ({ active }: DragStartEvent) => setActiveId(active.id),
-    []
-  );
+  // const handleDragStart = (event) => {
+  //   setActiveId(event.active.id);
+  // };
 
-  const handleDragEnd = React.useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
 
-      if (over && active.id !== over.id) {
-        setPhotos((items) => {
-          const oldIndex = items.findIndex((item) => item.id === active.id);
-          const newIndex = items.findIndex((item) => item.id === over.id);
+    if (active.id !== over.id) {
+      const oldIndex = photos.indexOf(active.id);
+      const newIndex = photos.indexOf(over.id);
+      const newItemsOrder = arrayMove(photos, oldIndex, newIndex);
+      setPhotos(newItemsOrder);
 
-          return arrayMove(items, oldIndex, newIndex);
+      if (!warned) {
+        setSnackbar({
+          children:
+            "Don't forget to save your new gallery order before leaving!",
+          severity: "warning",
         });
-
-        if (!warned) {
-          setSnackbar({
-            ...snackbar,
-            message:
-              "Don't forget to save your new gallery order before leaving!",
-            severity: "warning",
-            open: true,
-          });
-          setWarned(true);
-        }
+        setWarned(true);
       }
+    }
 
-      setActiveId(undefined);
-    },
-    [snackbar, warned]
-  );
-
-  const renderPhoto = (props: SortablePhotoProps) => {
-    // capture rendered photos for future use in DragOverlay
-    renderedPhotos.current[props.photo.id] = props;
-    return <SortablePhotoFrame activeIndex={activeIndex} {...props} />;
+    // setActiveId(null);
   };
+
+  // const handleDragCancel = () => {
+  //   setActiveId(null);
+  // };
 
   const updateImageOrder = () => {
     setLoading(true);
     api
-      .updateGalleryImagesOrder(
-        props.galleryID,
-        photos.map((s) => s.id)
-      )
+      .updateGalleryImagesOrder(props.galleryID, photos)
       .then(() => {
         setSnackbar({
           ...snackbar,
@@ -256,27 +131,37 @@ export default function SortableGallery(props: Props) {
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
+        // onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        // onDragCancel={handleDragCancel}
       >
-        <SortableContext items={photos.map((s) => Number(s.alt))}>
-          <div style={{ margin: 30 }}>
-            <PhotoAlbum
-              photos={photos}
-              layout="rows"
-              spacing={30}
-              padding={20}
-              renderPhoto={renderPhoto}
-            />
-          </div>
+        <SortableContext items={photos} strategy={rectSortingStrategy}>
+          <ImageList variant="masonry" cols={getCols()} gap={6}>
+            {photos.map((id, idx) => {
+              return (
+                <SortableImage
+                  key={id}
+                  index={idx}
+                  {...props}
+                  photo={props.images.find((x) => x.ID === id) as Photo}
+                />
+              );
+            })}
+          </ImageList>
         </SortableContext>
-        <DragOverlay>
-          {activeId && (
-            <PhotoFrame overlay {...renderedPhotos.current[activeId]} />
-          )}
-        </DragOverlay>
       </DndContext>
-      <Snacks snackbar={snackbar} handleSnackbarClose={handleSnackbarClose} />
+      {!!snackbar && (
+        <Snackbar
+          open
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          onClose={handleCloseSnackbar}
+          autoHideDuration={10000}
+        >
+          <Alert {...snackbar} onClose={handleCloseSnackbar} />
+        </Snackbar>
+      )}
     </React.Fragment>
   );
-}
+};
+
+export default SortableGallery;

@@ -1,9 +1,8 @@
 import { getImageSrc } from "@/helpers/photos";
 import { Photo as PhotoModel } from "@/lib/models";
 import React from "react";
-import PhotoAlbum, { Photo } from "react-photo-album";
-import useLightbox from "./useLightbox";
-import NextAlbumImage from "./NextAlbumImage";
+import useLightbox from "./lightbox/useLightbox";
+import ResponsiveGallery from "./ResponsiveGallery";
 
 type Props = {
   galleryID: number;
@@ -17,6 +16,7 @@ function Gallery(props: Props) {
 
   setLightboxGalleryID(props.galleryID);
 
+  // Lightbox slides expects slightly different format
   const photos = props.photos.map((photo) => {
     return {
       src: getImageSrc(photo.ID),
@@ -26,23 +26,16 @@ function Gallery(props: Props) {
       key: photo.filename,
       blurDataURL: photo.blurDataURL,
       download: photo.filename,
-    } as Photo;
+    };
   });
 
   return (
     <>
-      <PhotoAlbum
-        layout="rows"
-        photos={photos}
-        renderPhoto={(renderProps) => (
-          <NextAlbumImage {...renderProps} galleryID={props.galleryID} />
-        )}
-        defaultContainerWidth={1200}
-        onClick={({ index }) => setLightboxIndex(index)}
-        sizes={{
-          size: "calc(100vw / 2)",
-          sizes: [{ viewport: "(max-width: 960px)", size: "100vw" }],
-        }}
+      <ResponsiveGallery
+        photos={props.photos}
+        galleryID={props.galleryID}
+        onClick={(index: number) => setLightboxIndex(index)}
+        quality={100}
       />
 
       {renderLightbox({ slides: photos })}

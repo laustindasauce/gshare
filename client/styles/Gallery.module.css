@@ -10,7 +10,7 @@
 
 .container {
   /* Override the 6px margin bottom given by image list */
-  margin-bottom: 0 !important;
+  /* margin-bottom: 0 !important; */
 }
 
 .container:hover img {

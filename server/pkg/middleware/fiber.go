@@ -68,32 +68,6 @@ func FiberMiddleware(a *fiber.App) {
 			Format:   "[${ip}]:${port} - ${method} ${path} ${queryParams} - ${status}\n",
 			TimeZone: configs.Getenv("TZ", "UTC"),
 		}),
-		// Add cache for api
-		cache.New(cache.Config{
-			Next: func(c *fiber.Ctx) bool {
-				return c.Query("noCache") == "true"
-			},
-			ExpirationGenerator: func(c *fiber.Ctx, cfg *cache.Config) time.Duration {
-				// Default of no cache
-				newCacheTime, _ := strconv.Atoi(c.GetRespHeader("Cache-Time", "0"))
-
-				// If the cache time is less than or equal to 0, then we don't cache
-				if newCacheTime <= 0 {
-					return time.Duration(0)
-				}
-
-				if newCacheTime > 0 {
-					log.Debugf("Setting cache expiration time for %s to %d\n", c.Path(), newCacheTime)
-				}
-
-				// Return the cache time
-				return time.Second * time.Duration(newCacheTime)
-			},
-			KeyGenerator: func(c *fiber.Ctx) string {
-				return utils.CopyString(c.Path())
-			},
-			Storage: getStorage(),
-		}),
 		// Add simple Favicon
 		favicon.New(favicon.Config{
 			File: "./favicon.ico",
@@ -109,7 +83,39 @@ func FiberMiddleware(a *fiber.App) {
 		}),
 	)
 
-	// Only add limiter if it is enabled
+	// Only add cache when enabled
+	if configs.GetenvBool("CACHE_ENABLED", true) {
+		a.Use(
+			// Add cache for api
+			cache.New(cache.Config{
+				Next: func(c *fiber.Ctx) bool {
+					return c.Query("noCache") == "true"
+				},
+				ExpirationGenerator: func(c *fiber.Ctx, cfg *cache.Config) time.Duration {
+					// Default of no cache
+					newCacheTime, _ := strconv.Atoi(c.GetRespHeader("Cache-Time", "0"))
+
+					// If the cache time is less than or equal to 0, then we don't cache
+					if newCacheTime <= 0 {
+						return time.Duration(0)
+					}
+
+					if newCacheTime > 0 {
+						log.Debugf("Setting cache expiration time for %s to %d\n", c.Path(), newCacheTime)
+					}
+
+					// Return the cache time
+					return time.Second * time.Duration(newCacheTime)
+				},
+				KeyGenerator: func(c *fiber.Ctx) string {
+					return utils.CopyString(c.Path())
+				},
+				Storage: getStorage(),
+			}),
+		)
+	}
+
+	// Only add limiter when enabled
 	if configs.GetenvBool("LIMITER_ENABLED", false) {
 		a.Use(
 			// Add simple limiter

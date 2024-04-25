@@ -23,3 +23,8 @@ type APIErrorResponse struct {
 	// the conditions that caused the error, stack traces, etc.
 	Data any `json:"data,omitempty"`
 }
+
+// Array of IDs expected when doing a bulk select of items
+type BulkSelect struct {
+	IDs []uint `json:"ids"`
+}

@@ -22,6 +22,13 @@ definitions:
       password:
         type: string
     type: object
+  models.BulkSelect:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
   models.Event:
     properties:
       bytes:
@@ -416,8 +423,8 @@ paths:
       summary: download an image by ID
       tags:
       - Download
-  /v1/download/{size}/images/{imageIDs}:
-    get:
+  /v1/download/{size}/images:
+    post:
       description: Download multiple images by ID.
       parameters:
       - description: Image Size
@@ -425,11 +432,11 @@ paths:
         name: size
         required: true
         type: string
-      - description: Comma separated Image IDs
-        in: path
-        name: imageID
-        required: true
-        type: string
+      - description: List of image IDs
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/models.BulkSelect'
       produces:
       - application/json
       responses:
