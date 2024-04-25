@@ -186,7 +186,7 @@ func GetImageSized(c *fiber.Ctx) error {
 
 	log.Warnf("Setting cache expiration time for image to %s\n", time.Now().Add(duration))
 
-	c.Set("Cache-Time", fmt.Sprint(duration))
+	c.Set("Cache-Time", fmt.Sprint(int(duration.Seconds())))
 
 	return c.Send(resizedImage)
 }
