@@ -7,7 +7,7 @@ import type {
 } from "yet-another-react-lightbox";
 import Download from "yet-another-react-lightbox/plugins/download";
 import NextLightboxImage from "./NextLightboxImage";
-import DownloadPrompt from "./DownloadPrompt";
+import DownloadPrompt from "../DownloadPrompt";
 
 const Lightbox = dynamic(() => import("./Lightbox"));
 
