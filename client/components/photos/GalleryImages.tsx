@@ -1,12 +1,17 @@
 import { GalleryUpdateModel, Photo as PhotoModel } from "@/lib/models";
-import { Alert, Snackbar } from "@mui/material";
-import Image from "next/image";
+import {
+  Alert,
+  ImageList,
+  ImageListItem,
+  Snackbar,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import Confirmation from "./Confirmation";
-import { getImageSrc, shimmer, toBase64 } from "@/helpers/photos";
+import { getImageFullSrc, getImageSrc } from "@/helpers/photos";
 import ImageContextMenu from "./ImageContextMenu";
 import api from "@/lib/api";
-import PhotoAlbum, { Photo, RenderPhotoProps } from "react-photo-album";
 
 type Props = {
   images: PhotoModel[];
@@ -15,31 +20,42 @@ type Props = {
 const GalleryImages = (props: Props) => {
   const [snackbar, setSnackbar] = React.useState<any>(null);
   const handleCloseSnackbar = () => setSnackbar(null);
-  const [resources, setResources] = React.useState(
-    props.images.map((photo) => {
-      return {
-        src: getImageSrc(photo.ID),
-        width: photo.width,
-        height: photo.height,
-        alt: `${photo.ID}`,
-        key: `${photo.gallery_id}`,
-        blurDataURL: `data:image/svg+xml;base64,${toBase64(
-          shimmer(photo.width, photo.height)
-        )}`,
-        download: photo.filename,
-      } as Photo;
-    })
-  );
+  const [images, setImages] = React.useState(props.images);
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.only("xs"));
+  const isSm = useMediaQuery(theme.breakpoints.only("sm"));
+  const isMd = useMediaQuery(theme.breakpoints.only("md"));
+  const isLg = useMediaQuery(theme.breakpoints.only("lg"));
+
+  const quality = process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY || 40;
+
+  const getCols = () => {
+    let cols = 5;
+    if (isXs) {
+      cols = 2;
+    } else if (isSm) {
+      cols = 3;
+    } else if (isMd) {
+      cols = 4;
+    } else if (isLg) {
+      cols = 4;
+    }
+
+    return cols;
+  };
 
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] =
     React.useState(false);
 
-  const [contextImage, setContextImage] = React.useState<Photo | null>(null);
+  const [contextImage, setContextImage] = React.useState<PhotoModel | null>(
+    null
+  );
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleContextMenu = (
     event: React.MouseEvent<HTMLDivElement>,
-    image: Photo
+    image: PhotoModel
   ) => {
     event.preventDefault();
     setAnchorEl(event.currentTarget);
@@ -53,7 +69,7 @@ const GalleryImages = (props: Props) => {
 
   const handleDeleteConfirmationClose = (deleted: boolean, msg: string) => {
     if (!!deleted && !!contextImage) {
-      setResources(resources.filter((row) => row.alt !== contextImage.alt));
+      setImages(images.filter((row) => row.ID !== contextImage.ID));
       setSnackbar({
         children: msg,
         severity: "success",
@@ -66,7 +82,7 @@ const GalleryImages = (props: Props) => {
     }
 
     setDeleteConfirmationOpen(false);
-    setContextImage(null);
+    handleContextMenuClose();
   };
 
   const onMenuItemClick = async (action: string) => {
@@ -82,10 +98,10 @@ const GalleryImages = (props: Props) => {
       case "setFeatured":
         // Handle setFeatured action
         const updateGallery: GalleryUpdateModel = {
-          featured_image_id: Number(contextImage.alt),
+          featured_image_id: contextImage.ID,
         };
         api
-          .updateGallery(updateGallery, Number(contextImage.key))
+          .updateGallery(updateGallery, contextImage.gallery_id)
           .then(() =>
             setSnackbar({
               children: "Featured image updated!",
@@ -110,10 +126,7 @@ const GalleryImages = (props: Props) => {
         //   children: "Image url copied to clipboard.",
         //   severity: "success",
         // });
-        window.open(
-          `${getImageSrc(Number(contextImage.alt))}/original/100`,
-          "_blank"
-        );
+        window.open(`${getImageSrc(contextImage.ID)}/original/100`, "_blank");
         handleContextMenuClose();
         break;
       default:
@@ -125,38 +138,34 @@ const GalleryImages = (props: Props) => {
 
   return (
     <React.Fragment>
-      <PhotoAlbum
-        layout="rows"
-        photos={resources}
-        renderPhoto={({
-          photo,
-          imageProps: { alt, title, sizes, className, onClick },
-          wrapperStyle,
-        }: RenderPhotoProps) => {
-          return (
-            <div
+      <ImageList variant="masonry" cols={getCols()} gap={4}>
+        {props.images.map((photo, index) => (
+          <ImageListItem
+            key={photo.ID}
+            data-aos="fade"
+            data-aos-easing="ease-in-cubic"
+            data-aos-anchor-placement="top-bottom"
+            data-aos-delay={100}
+            data-aos-duration={500}
+          >
+            <img
+              src={getImageFullSrc(photo.ID, "web", Number(quality))}
+              srcSet={`${getImageFullSrc(photo.ID, 150, Number(quality))} 150w,
+            ${getImageFullSrc(photo.ID, 300, Number(quality))} 300w,
+            ${getImageFullSrc(photo.ID, 600, Number(quality))} 600w,
+            ${getImageFullSrc(photo.ID, 900, Number(quality))} 900w,
+            ${getImageFullSrc(photo.ID, 1200, Number(quality))} 1200w`}
+              sizes="(max-width: 600px) 50vw,
+            (max-width: 900px) 33vw,
+            (max-width: 1536px) 25vw,
+            20vw"
+              alt={`${photo.filename}`}
+              loading="lazy"
               onContextMenu={(e) => handleContextMenu(e, photo)}
-              style={{ ...wrapperStyle, position: "relative" }}
-            >
-              <Image
-                fill
-                src={photo}
-                placeholder={`data:image/svg+xml;base64,${toBase64(
-                  shimmer(photo.width, photo.height)
-                )}`}
-                quality="75"
-                loading="lazy"
-                {...{ alt, title, sizes, className, onClick }}
-              />
-            </div>
-          );
-        }}
-        defaultContainerWidth={1200}
-        sizes={{
-          size: "calc(100vw / 2)",
-          sizes: [{ viewport: "(max-width: 960px)", size: "100vw" }],
-        }}
-      />
+            />
+          </ImageListItem>
+        ))}
+      </ImageList>
       {!!contextImage && (
         <Confirmation
           open={deleteConfirmationOpen}

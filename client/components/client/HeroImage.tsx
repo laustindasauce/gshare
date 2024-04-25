@@ -37,12 +37,10 @@ const HeroImage = (props: Props) => {
         fill
         style={{ objectFit: "cover" }}
         quality="100"
-        data-pin-no-hover="true"
         priority
       />
       <Box className={styles.content}>
         {process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT && (
-          /* eslint-disable @next/next/no-img-element */
           <img
             style={{ width: "100%", maxWidth: "250px" }}
             src={process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT as string}
