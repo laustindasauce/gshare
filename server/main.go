@@ -33,7 +33,7 @@ func init() {
 }
 
 // @contact.name gshare API Support
-// @contact.email gshare@austinbspencer.com
+// @contact.email austin.spencer2097@gmail.com
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
