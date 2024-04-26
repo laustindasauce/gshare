@@ -5,6 +5,7 @@ const fs = require("fs");
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  transpilePackages: ["@mui/x-charts"],
   swcMinify: true,
   images: {
     loader: "custom",
