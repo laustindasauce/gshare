@@ -1,3 +1,5 @@
+import { EventModel } from "@/lib/models";
+
 export const getFormattedTableDate = (date: Date) => {
   date = new Date(date);
   var year = String(date.getFullYear()).slice(2);
@@ -63,3 +65,87 @@ export const bytesToSize = (bytes: number): string => {
     return `${convertedSize} ${sizes[i]}`;
   }
 };
+
+export const getEventsImagesCountGraph = (
+  events: EventModel[]
+): {
+  value: number;
+  filename: string;
+  label: string;
+}[] => {
+  const transformedData = events.reduce(
+    (
+      acc: {
+        [key: string]: { filename: string; value: number; label: string };
+      },
+      current
+    ) => {
+      if (!acc[current.filename]) {
+        // If filename doesn't exist in accumulator, initialize with value 1
+        acc[current.filename] = {
+          filename: current.filename,
+          value: 1,
+          label: current.image_id ? String(current.image_id) : "zip",
+        };
+      } else {
+        // If filename exists, increase the value
+        acc[current.filename].value += 1;
+      }
+      return acc;
+    },
+    {}
+  );
+
+  // Convert the transformed data back to array format
+  const dataArray = Object.values(transformedData);
+
+  return dataArray;
+};
+
+export const getEventsResolutionDifference = (
+  events: EventModel[]
+): {
+  value: number;
+  label: string;
+  bytes: number;
+}[] => {
+  const transformedData = events.reduce(
+    (
+      acc: {
+        [key: string]: { value: number; label: string; bytes: number };
+      },
+      current
+    ) => {
+      if (!acc[current.size]) {
+        // If size doesn't exist in accumulator, initialize with value 1
+        acc[current.size] = {
+          value: 1,
+          label: current.size,
+          bytes: current.bytes,
+        };
+      } else {
+        // If size exists, increase the value
+        acc[current.size].value += 1;
+        acc[current.size].bytes += current.bytes;
+      }
+      return acc;
+    },
+    {}
+  );
+
+  // Convert the transformed data back to array format
+  const dataArray = Object.values(transformedData);
+
+  return dataArray;
+};
+
+export const bytesToKilobytes = (bytes: number): number => bytes / 1024;
+
+export const bytesToMegabytes = (bytes: number): number =>
+  bytes / (1024 * 1024);
+
+export const bytesToGigabytes = (bytes: number): number =>
+  bytes / (1024 * 1024 * 1024);
+
+export const formatNumberWithCommas = (num: number): string =>
+  num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
