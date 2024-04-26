@@ -123,7 +123,7 @@ export interface EventModel {
   gallery_id: number;
   image_id: number | null;
   requestor: string;
-  filename: string | null;
+  filename: string;
   size: string;
   bytes: number;
 }

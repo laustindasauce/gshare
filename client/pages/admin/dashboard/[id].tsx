@@ -1,4 +1,5 @@
-import EventsTable from "@/components/gallery/EventsTable";
+import EventsGraphs from "@/components/events/EventsGraphs";
+import EventsTable from "@/components/events/EventsTable";
 import GallerySettings from "@/components/gallery/GallerySettings";
 import GalleryShareButton from "@/components/gallery/GalleryShareButton";
 import ZipGalleryButton from "@/components/gallery/ZipGalleryButton";
@@ -296,6 +297,7 @@ const GalleryHandler = ({ galleryID, token }: Props) => {
           </Container>
         </TabPanel>
         <TabPanel value="three">
+          <EventsGraphs events={gallery.events} />
           <EventsTable events={gallery.events} setSnackBar={setSnackbar} />
         </TabPanel>
       </TabContext>
