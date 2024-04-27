@@ -10,6 +10,10 @@ const galleryGlobalTheme: PaletteOptions = {
   secondary: {
     main: orange[600],
   },
+
+  info: {
+    main: "#fff",
+  },
 };
 
 export default galleryGlobalTheme;

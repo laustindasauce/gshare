@@ -136,7 +136,7 @@ const SortableGallery = (props: Props) => {
         // onDragCancel={handleDragCancel}
       >
         <SortableContext items={photos} strategy={rectSortingStrategy}>
-          <ImageList variant="masonry" cols={getCols()} gap={6}>
+          <ImageList variant="masonry" cols={getCols()} gap={7}>
             {photos.map((id, idx) => {
               return (
                 <SortableImage
@@ -144,6 +144,7 @@ const SortableGallery = (props: Props) => {
                   index={idx}
                   {...props}
                   photo={props.images.find((x) => x.ID === id) as Photo}
+                  cols={getCols()}
                 />
               );
             })}

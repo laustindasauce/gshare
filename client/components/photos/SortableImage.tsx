@@ -15,18 +15,38 @@ import React from "react";
 type Props = {
   photo: Photo;
   index: number;
+  cols: number;
 };
 
-const SortableImage = ({ photo, index }: Props) => {
-  const { ID, filename } = photo;
+const SortableImage = ({ photo, index, cols }: Props) => {
+  const { ID, filename, width, height, blurDataURL } = photo;
   const sortable = useSortable({ id: ID });
   const { attributes, listeners, setNodeRef, transform, transition } = sortable;
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    marginBottom: 0,
   };
-  const quality = process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY || 40;
+
+  const quality = process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY
+    ? Number(process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY)
+    : 40;
+
+  const getImageSize = (height: number, width: number) => {
+    let size = calcImageSize(height, width, 100000, 900);
+    if (cols === 2) {
+      size = calcImageSize(height, width, 100000, 300);
+    } else if (cols === 3) {
+      size = calcImageSize(height, width, 100000, 450);
+    } else if (cols === 4) {
+      size = calcImageSize(height, width, 100000, 600);
+    }
+
+    return size;
+  };
+
+  const imageSize = getImageSize(height, width);
 
   const sortableProps = { index: index };
   return (
@@ -39,20 +59,23 @@ const SortableImage = ({ photo, index }: Props) => {
       {...attributes}
       {...listeners}
     >
-      <img
-        className="img-link"
-        src={getImageFullSrc(ID, "web", Number(quality))}
-        srcSet={`${getImageFullSrc(ID, 150, Number(quality))} 150w,
-            ${getImageFullSrc(ID, 300, Number(quality))} 300w,
-            ${getImageFullSrc(ID, 600, Number(quality))} 600w,
-            ${getImageFullSrc(ID, 900, Number(quality))} 900w,
-            ${getImageFullSrc(ID, 1200, Number(quality))} 1200w`}
-        sizes="(max-width: 600px) 50vw,
-            (max-width: 900px) 33vw,
-            (max-width: 1536px) 25vw,
-            20vw"
-        alt={`${filename}`}
+      <Image
+        className="link"
+        src={getImageSrc(ID)}
         loading="lazy"
+        placeholder={
+          (blurDataURL as `data:image/${string}`) ||
+          `data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`
+        }
+        alt={filename}
+        height={imageSize.height}
+        width={imageSize.width}
+        quality={quality}
+        style={{
+          objectFit: "contain",
+          maxWidth: "100%",
+          height: "auto",
+        }}
       />
     </ImageListItem>
   );
