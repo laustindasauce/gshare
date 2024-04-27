@@ -11,11 +11,11 @@ The gallery is built to be fully responsive, using the [Masonry image list](http
 
 ### Performance
 
-The gallery is configured with performance in mind. Utilizing [srcset and sizes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images) along with our server's built-in image resizing to deliver crisp and web performant images.
+The gallery is configured with performance in mind. Utilizing the [Next.js Image component](https://nextjs.org/docs/pages/building-your-application/optimizing/images), along with our server's built-in image resizing to deliver crisp and web performant images.
 
 ### Overlay
 
-When browsing the gallery on the web, you will see a subtle overlay at the bottom of an image when hovered that displays a download icon allowing clients to download directly from the full gallery. There is also the ability to click any image and open it in the [lightbox](./lightbox.md) for a larger view and ability to scroll / download.
+When browsing the gallery on the web, you will see a subtle overlay of the image when hovered that displays a download icon allowing clients to download directly from the full gallery. There is also the ability to click any image and open it in the [lightbox](./lightbox.md) for a larger view and ability to scroll / download.
 
 ### Demo
 
