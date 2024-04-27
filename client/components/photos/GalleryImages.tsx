@@ -9,9 +9,16 @@ import {
 } from "@mui/material";
 import React from "react";
 import Confirmation from "./Confirmation";
-import { getImageFullSrc, getImageSrc } from "@/helpers/photos";
+import {
+  calcImageSize,
+  getImageFullSrc,
+  getImageSrc,
+  shimmer,
+  toBase64,
+} from "@/helpers/photos";
 import ImageContextMenu from "./ImageContextMenu";
 import api from "@/lib/api";
+import Image from "next/image";
 
 type Props = {
   images: PhotoModel[];
@@ -28,7 +35,9 @@ const GalleryImages = (props: Props) => {
   const isMd = useMediaQuery(theme.breakpoints.only("md"));
   const isLg = useMediaQuery(theme.breakpoints.only("lg"));
 
-  const quality = process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY || 40;
+  const quality = process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY
+    ? Number(process.env.NEXT_PUBLIC_ADMIN_IMAGE_QUALITY)
+    : 40;
 
   const getCols = () => {
     let cols = 5;
@@ -43,6 +52,19 @@ const GalleryImages = (props: Props) => {
     }
 
     return cols;
+  };
+
+  const getImageSize = (height: number, width: number) => {
+    let size = calcImageSize(height, width, 100000, 900);
+    if (isXs) {
+      size = calcImageSize(height, width, 100000, 300);
+    } else if (isSm) {
+      size = calcImageSize(height, width, 100000, 450);
+    } else if (isMd) {
+      size = calcImageSize(height, width, 100000, 600);
+    }
+
+    return size;
   };
 
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] =
@@ -138,33 +160,43 @@ const GalleryImages = (props: Props) => {
 
   return (
     <React.Fragment>
-      <ImageList variant="masonry" cols={getCols()} gap={4}>
-        {props.images.map((photo, index) => (
-          <ImageListItem
-            key={photo.ID}
-            data-aos="fade"
-            data-aos-easing="ease-in-cubic"
-            data-aos-anchor-placement="top-bottom"
-            data-aos-delay={100}
-            data-aos-duration={500}
-          >
-            <img
-              src={getImageFullSrc(photo.ID, "web", Number(quality))}
-              srcSet={`${getImageFullSrc(photo.ID, 150, Number(quality))} 150w,
-            ${getImageFullSrc(photo.ID, 300, Number(quality))} 300w,
-            ${getImageFullSrc(photo.ID, 600, Number(quality))} 600w,
-            ${getImageFullSrc(photo.ID, 900, Number(quality))} 900w,
-            ${getImageFullSrc(photo.ID, 1200, Number(quality))} 1200w`}
-              sizes="(max-width: 600px) 50vw,
-            (max-width: 900px) 33vw,
-            (max-width: 1536px) 25vw,
-            20vw"
-              alt={`${photo.filename}`}
-              loading="lazy"
-              onContextMenu={(e) => handleContextMenu(e, photo)}
-            />
-          </ImageListItem>
-        ))}
+      <ImageList variant="masonry" cols={getCols()} gap={7}>
+        {props.images.map((photo, index) => {
+          const imageSize = getImageSize(photo.height, photo.width);
+
+          return (
+            <ImageListItem
+              style={{ marginBottom: 0 }}
+              key={photo.ID}
+              data-aos="fade"
+              data-aos-easing="ease-in-cubic"
+              data-aos-anchor-placement="top-bottom"
+              data-aos-delay={100}
+              data-aos-duration={500}
+            >
+              <Image
+                src={getImageSrc(photo.ID)}
+                loading="lazy"
+                placeholder={
+                  (photo.blurDataURL as `data:image/${string}`) ||
+                  `data:image/svg+xml;base64,${toBase64(
+                    shimmer(photo.width, photo.height)
+                  )}`
+                }
+                alt={photo.filename}
+                height={imageSize.height}
+                width={imageSize.width}
+                quality={quality}
+                style={{
+                  objectFit: "contain",
+                  maxWidth: "100%",
+                  height: "auto",
+                }}
+                onContextMenu={(e) => handleContextMenu(e, photo)}
+              />
+            </ImageListItem>
+          );
+        })}
       </ImageList>
       {!!contextImage && (
         <Confirmation

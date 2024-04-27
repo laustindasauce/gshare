@@ -10,16 +10,17 @@
 
 .container {
   /* Override the 6px margin bottom given by image list */
-  /* margin-bottom: 0 !important; */
+  margin-bottom: 0 !important;
 }
 
 .container:hover img {
   cursor: pointer;
+  filter: brightness(85%);
 }
 
 .container:hover .overlay {
   /* display: block; */
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7));
+  /* background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3)); */
   cursor: pointer;
 }
 /* .container:hover img {
