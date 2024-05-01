@@ -21,6 +21,30 @@ jobs:
           go-version-file: "server/go.mod" # Get version from go.mod
           cache-dependency-path: "server/go.sum"
 
+      # Get values for cache paths to be used in later steps
+      - id: go-cache-paths
+        run: |
+          echo "go-build-path=$(go env GOCACHE)"
+          echo "go-mod-path=$(go env GOMODCACHE)"
+
+      # Cache go build cache, used to speedup go test
+      - name: Go Build Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-build }}
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-build-
+
+      # Cache go mod cache, used to speedup builds
+      - name: Go Mod Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-mod-
+
       - name: Install dependencies
         run: go get .
 
