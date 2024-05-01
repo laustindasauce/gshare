@@ -21,14 +21,15 @@ jobs:
           version: 9.0.5
 
       - name: Get pnpm store directory
+        id: store
         shell: bash
         run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
-          path: ${{ env.STORE_PATH }}
+          path: ${{ steps.store.outputs.path }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
@@ -38,3 +39,10 @@ jobs:
 
       - name: Run Lint
         run: pnpm lint:ci
+
+      # Create fake version file
+      - name: Create version file
+        run: echo "vx.x.x" > version
+
+      - name: Run Build
+        run: pnpm build
