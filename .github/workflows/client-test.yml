@@ -40,5 +40,9 @@ jobs:
       - name: Run Lint
         run: pnpm lint:ci
 
+      # Create fake version file
+      - name: Create version file
+        run: echo "vx.x.x" > version
+
       - name: Run Build
         run: pnpm build
