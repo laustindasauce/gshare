@@ -24,14 +24,14 @@ jobs:
       # Get values for cache paths to be used in later steps
       - id: go-cache-paths
         run: |
-          echo "go-build-path=$(go env GOCACHE)"
-          echo "go-mod-path=$(go env GOMODCACHE)"
+          echo "go-build=$(go env GOCACHE)" >> $GITHUB_OUTPUT
+          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
 
       # Cache go build cache, used to speedup go test
       - name: Go Build Cache
         uses: actions/cache@v4
         with:
-          path: ${{ steps.go-cache-paths.outputs.go-build-path }}
+          path: ${{ steps.go-cache-paths.outputs.go-build }}
           key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-build-
@@ -40,7 +40,7 @@ jobs:
       - name: Go Mod Cache
         uses: actions/cache@v4
         with:
-          path: ${{ steps.go-cache-paths.outputs.go-mod-path }}
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
           key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-mod-
