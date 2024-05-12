@@ -26,7 +26,7 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 
 ARG APP_VERSION
-ENV NEXT_PUBLIC_VERSION=${APP_VERSION}
+ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
 ENV PORT 3000
 # Disabled Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
