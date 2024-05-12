@@ -1,4 +1,3 @@
-import HeroImage from "@/components/client/HeroImage";
 import GalleryHandler from "@/components/client/GalleryHandler";
 import {
   Alert,
@@ -11,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { GalleryModel } from "@/lib/models";
+import { GalleriesResponse, GalleryModel } from "@/lib/models";
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
 import Head from "next/head";
 import React from "react";
@@ -24,6 +23,8 @@ import DefaultLayout from "@/layouts/DefaultLayout";
 import { getImageBlurURL } from "@/helpers/photos";
 import axios from "axios";
 import { useRouter } from "next/router";
+import HeroImage from "@/components/client/HeroImage";
+// import HeroImageAlt from "@/components/client/HeroImageAlt";
 
 interface IParams extends ParsedUrlQuery {
   path: string;
@@ -292,9 +293,15 @@ export const getStaticProps: GetStaticProps = async (
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await api.getLiveGalleries();
+  let res: GalleriesResponse;
+  let galleries: GalleryModel[] = [];
 
-  const galleries: GalleryModel[] = res.data;
+  try {
+    res = await api.getLiveGalleries();
+    galleries = res.data;
+  } catch (error) {
+    console.error(error);
+  }
 
   let paths = galleries.map((gallery: GalleryModel) => ({
     params: { path: gallery.path },

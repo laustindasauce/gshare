@@ -25,11 +25,13 @@ COPY --link --chmod=755 entrypoint.sh ./entrypoint.sh
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 
+ARG APP_VERSION
+ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
 ENV PORT 3000
-EXPOSE 3000
-
 # Disabled Next.js telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
+
+EXPOSE 3000
 
 # Run the entrypoint scrip to start application
 CMD ["/bin/bash", "/app/entrypoint.sh"]

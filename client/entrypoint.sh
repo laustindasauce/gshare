@@ -1,5 +1,6 @@
 #!/bin/bash
 # client-entrypoint.sh
+echo "APP Version: $NEXT_PUBLIC_APP_VERSION"
 
 # All required environment variables available on frontend
 REQUIRED_VARIABLES=(

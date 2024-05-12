@@ -31,7 +31,7 @@ const createFirstUser = async (data: AuthModel) =>
       data,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateUser = async (data: UserUpdateModel, id: string | number) =>
@@ -46,7 +46,7 @@ const updateUser = async (data: UserUpdateModel, id: string | number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const login = async (data: AuthModel) =>
@@ -60,7 +60,7 @@ const login = async (data: AuthModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const login2FA = async (data: Auth2FAModel) =>
@@ -74,7 +74,7 @@ const login2FA = async (data: Auth2FAModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getAuthUser = async (token: string) =>
@@ -87,7 +87,7 @@ const getAuthUser = async (token: string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateAuthAdmin = async (email: string) =>
@@ -102,7 +102,7 @@ const updateAuthAdmin = async (email: string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getGallery = async (path: string) =>
@@ -112,7 +112,7 @@ const getGallery = async (path: string) =>
       url: `v1/galleries/path/${path}`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const unlockGallery = async (path: string, password: string) =>
@@ -123,7 +123,7 @@ const unlockGallery = async (path: string, password: string) =>
       data: { password },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getPublicGalleries = async () =>
@@ -174,7 +174,7 @@ const getPublicGalleries = async () =>
           }
         }
       })
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getLiveGalleries = async () =>
@@ -184,7 +184,7 @@ const getLiveGalleries = async () =>
       url: `v1/galleries/live`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const createGallery = async (data: NewGalleryModel) =>
@@ -199,7 +199,7 @@ const createGallery = async (data: NewGalleryModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getGalleries = async (token: string) =>
@@ -212,7 +212,7 @@ const getGalleries = async (token: string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getGalleryById = async (id: string | number) =>
@@ -225,7 +225,7 @@ const getGalleryById = async (id: string | number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getGalleryByIdServerSide = async (id: string | number, token: string) =>
@@ -238,7 +238,7 @@ const getGalleryByIdServerSide = async (id: string | number, token: string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateGallery = async (data: GalleryUpdateModel, id: number) =>
@@ -253,7 +253,7 @@ const updateGallery = async (data: GalleryUpdateModel, id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const deleteGallery = async (id: number) =>
@@ -266,7 +266,7 @@ const deleteGallery = async (id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const uploadGalleryImage = async (uploadData: any, id: number | string) =>
@@ -281,7 +281,7 @@ const uploadGalleryImage = async (uploadData: any, id: number | string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const createGalleryImageZips = async (id: number) =>
@@ -294,7 +294,7 @@ const createGalleryImageZips = async (id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getImages = async () =>
@@ -307,7 +307,7 @@ const getImages = async () =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getImage = async (id: number | string) =>
@@ -320,7 +320,7 @@ const getImage = async (id: number | string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const deleteImage = async (id: number) =>
@@ -333,7 +333,7 @@ const deleteImage = async (id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const downloadImage = async (size: string, imageId: number) =>
@@ -343,7 +343,7 @@ const downloadImage = async (size: string, imageId: number) =>
       url: `v1/download/${size}/image/${imageId}`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const downloadImages = async (size: string, imageIds: number[]) =>
@@ -353,7 +353,7 @@ const downloadImages = async (size: string, imageIds: number[]) =>
       url: `v1/download/${size}/image/${imageIds.join(",")}`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const downloadGallery = async (size: string, galleryId: number) =>
@@ -363,7 +363,7 @@ const downloadGallery = async (size: string, galleryId: number) =>
       url: `v1/download/${size}/gallery/${galleryId}`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const createEvent = async (data: EventModel) =>
@@ -377,7 +377,7 @@ const createEvent = async (data: EventModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getEvent = async (id: number | string) =>
@@ -390,7 +390,7 @@ const getEvent = async (id: number | string) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getEvents = async () =>
@@ -403,7 +403,7 @@ const getEvents = async () =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const deleteEvent = async (id: number) =>
@@ -416,7 +416,7 @@ const deleteEvent = async (id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateGalleryImagesOrder = async (
@@ -433,7 +433,7 @@ const updateGalleryImagesOrder = async (
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const createCompany = async (data: CompanyModel) =>
@@ -448,7 +448,7 @@ const createCompany = async (data: CompanyModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getCompany = async (id: number | string) =>
@@ -458,7 +458,7 @@ const getCompany = async (id: number | string) =>
       url: `v1/company/${id}`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateCompany = async (data: CompanyModel) =>
@@ -473,7 +473,7 @@ const updateCompany = async (data: CompanyModel) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const deleteCompany = async (id: number) =>
@@ -486,7 +486,7 @@ const deleteCompany = async (id: number) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getSettings = async (_: any) =>
@@ -499,7 +499,7 @@ const getSettings = async (_: any) =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const getSettingsPublic = async () =>
@@ -509,7 +509,7 @@ const getSettingsPublic = async () =>
       url: `v1/settings/public`,
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const updateSettings = async () =>
@@ -523,7 +523,7 @@ const updateSettings = async () =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const redeploySite = async () =>
@@ -536,7 +536,7 @@ const redeploySite = async () =>
       },
     })
       .then((res) => resolve(res.data))
-      .catch((err) => reject(err.response?.data))
+      .catch((err) => reject(err.response?.data || err))
   );
 
 const api = {

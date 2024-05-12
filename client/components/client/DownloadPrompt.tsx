@@ -1,8 +1,6 @@
 import * as React from "react";
 import {
-  Box,
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,13 +13,10 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  TextField,
 } from "@mui/material";
-import { emailIsValid } from "@/helpers/validation";
 import LoadingBackdrop from "../global/LoadingBackdrop";
 import api from "@/lib/api";
 import { getImageDownloadURL, getZipDownloadURL } from "@/helpers/photos";
-import { LoadingButton } from "@mui/lab";
 import { EventModel } from "@/lib/models";
 
 type Props = {
