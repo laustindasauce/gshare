@@ -29,9 +29,12 @@ WORKDIR /app
 
 # Copy necessary files from builder
 COPY --from=builder /app/server /app/server
-COPY --from=builder /app/version /app/version
 COPY --from=builder /app/templates /app/templates
 COPY --from=builder /app/favicon.ico /app/favicon.ico
+
+# Add the app version env
+ARG APP_VERSION
+ENV APP_VERSION=${APP_VERSION}
 
 # Expose port 8323 to the outside world
 EXPOSE 8323

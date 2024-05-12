@@ -2,12 +2,10 @@ package configs
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/austinbspencer/gshare-server/docs"
-	"github.com/gofiber/fiber/v2/log"
 )
 
 var (
@@ -26,15 +24,9 @@ func SetDocsInfo() {
 	docs.SwaggerInfo.Description = "Auto-generated API documentation for the gshare REST API."
 }
 
-// Set the App's version using the version file
+// Set the App's version using the environment variable
 func setAppVersion() {
-	version, err := os.ReadFile("version")
-	if err != nil {
-		log.Fatalf("Missing or corrupted version file: %v\n", err)
-	}
+	Version = Getenv("APP_VERSION", "vx.x.x")
 
-	docs.SwaggerInfo.Version = string(version)
-
-	// Set global var
-	Version = string(version)
+	docs.SwaggerInfo.Version = Version
 }
