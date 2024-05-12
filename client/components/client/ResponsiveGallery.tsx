@@ -88,6 +88,7 @@ const ResponsiveGallery = ({ photos, galleryID, onClick, quality }: Props) => {
             data-aos-duration={500}
           >
             <Image
+              onClick={() => onClick(index)}
               src={getImageSrc(photo.ID)}
               loading="lazy"
               placeholder={

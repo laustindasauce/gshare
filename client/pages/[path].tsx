@@ -1,4 +1,3 @@
-import HeroImage from "@/components/client/HeroImage";
 import GalleryHandler from "@/components/client/GalleryHandler";
 import {
   Alert,
@@ -24,6 +23,8 @@ import DefaultLayout from "@/layouts/DefaultLayout";
 import { getImageBlurURL } from "@/helpers/photos";
 import axios from "axios";
 import { useRouter } from "next/router";
+import HeroImage from "@/components/client/HeroImage";
+// import HeroImageAlt from "@/components/client/HeroImageAlt";
 
 interface IParams extends ParsedUrlQuery {
   path: string;

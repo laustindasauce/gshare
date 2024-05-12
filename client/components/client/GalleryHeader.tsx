@@ -1,10 +1,12 @@
-import { Download } from "@mui/icons-material";
-import { Button, Container, Stack, Typography, useTheme } from "@mui/material";
-import { GalleryModel } from "@/lib/models";
+import { Container, IconButton, Stack, Typography } from "@mui/material";
+import { GalleryModel, SnacksModel } from "@/lib/models";
 import React from "react";
 import DownloadPrompt from "./DownloadPrompt";
 import { getFormattedTableDate } from "@/helpers/format";
 import Grid from "@mui/material/Unstable_Grid2";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import ShareIcon from "@mui/icons-material/Share";
+import Snacks from "../global/Snacks";
 
 type Props = {
   gallery: GalleryModel;
@@ -12,12 +14,32 @@ type Props = {
 
 const GalleryHeader = (props: Props) => {
   const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
+
+  const [snackbar, setSnackbar] = React.useState<SnacksModel>({
+    open: false,
+    severity: "success",
+    locked: false,
+    message: "",
+    autoHideDuration: 4000,
+  });
 
   const handleClose = () => setOpen(false);
 
   const downloadGallery = () => {
     setOpen(true);
+  };
+
+  const copyGalleryPath = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    setSnackbar({
+      ...snackbar,
+      open: true,
+      message: "Gallery link copied to clipboard!",
+    });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   // Need to set the aos props only if hero is enabled due
@@ -64,27 +86,30 @@ const GalleryHeader = (props: Props) => {
               {props.gallery.title}
             </Typography>
             {props.gallery.event_date && (
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" {...titleProps}>
                 {getFormattedTableDate(props.gallery.event_date)}
               </Typography>
             )}
             <Typography variant="subtitle2" {...titleProps}>
               {process.env.NEXT_PUBLIC_PHOTOGRAPHER_NAME}
             </Typography>
+            <Typography variant="caption" {...titleProps}>
+              {props.gallery.images.length} Images
+            </Typography>
           </Stack>
         </Grid>
         <Grid xs={12} sm="auto">
-          <Button
-            {...buttonProps}
-            variant="contained"
-            onClick={downloadGallery}
-            color="primary"
-            startIcon={<Download />}
-          >
-            full gallery
-          </Button>
+          <Stack direction="row" spacing={2}>
+            <IconButton {...buttonProps} onClick={copyGalleryPath}>
+              <ShareIcon />
+            </IconButton>
+            <IconButton {...buttonProps} onClick={downloadGallery}>
+              <CloudDownloadIcon color="primary" />
+            </IconButton>
+          </Stack>
         </Grid>
       </Grid>
+      <Snacks snackbar={snackbar} handleSnackbarClose={handleSnackbarClose} />
     </Container>
   );
 };
