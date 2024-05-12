@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import styles from "@/styles/Hero.module.css";
+import styles from "@/styles/HeroAlt.module.css";
 import { Photo } from "@/lib/models";
 import { getImageSrc, shimmer, toBase64 } from "@/helpers/photos";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 type Props = {
   img: Photo;
@@ -12,7 +12,7 @@ type Props = {
   // children: JSX.Element;
 };
 
-const HeroImage = (props: Props) => {
+const HeroImageAlt = (props: Props) => {
   const { img } = props;
   return (
     <div
@@ -20,7 +20,7 @@ const HeroImage = (props: Props) => {
         position: "relative",
         overflow: "hidden",
         // width: "100vw",
-        height: `calc(100vh - ${props.padding || 0}px)`,
+        height: `calc(50vh - ${props.padding || 0}px)`,
       }}
       className={styles.container}
     >
@@ -39,26 +39,29 @@ const HeroImage = (props: Props) => {
         priority
       />
       <Box className={styles.content}>
-        {process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT && (
+        <Typography className={styles.heroTitle} variant="h4">
+          {props.title}
+        </Typography>
+        <Typography className={styles.subtitle} variant="body1">
+          {process.env.NEXT_PUBLIC_PHOTOGRAPHER_NAME}
+        </Typography>
+      </Box>
+      {process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT && (
+        <Box className={styles.logoContainer}>
           <img
-            style={{ width: "100%", maxWidth: "250px" }}
+            style={{
+              // width: "100%",
+              // maxWidth: "250px",
+              maxHeight: "20vh",
+              height: "100%",
+            }}
             src={process.env.NEXT_PUBLIC_PHOTOGRAPHER_LOGO_LIGHT as string}
             alt={`${process.env.NEXT_PUBLIC_PHOTOGRAPHER_NAME} Logo`}
           />
-        )}
-        <Typography className={styles.heroTitle} variant="h3">
-          {props.title}
-        </Typography>
-        <Button
-          className={styles.heroButton}
-          variant="outlined"
-          href="#gallery-header"
-        >
-          view gallery
-        </Button>
-      </Box>
+        </Box>
+      )}
     </div>
   );
 };
 
-export default HeroImage;
+export default HeroImageAlt;
