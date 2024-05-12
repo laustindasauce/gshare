@@ -30,12 +30,22 @@ const GalleryHeader = (props: Props) => {
   };
 
   const copyGalleryPath = async () => {
-    await navigator.clipboard.writeText(window.location.href);
-    setSnackbar({
-      ...snackbar,
-      open: true,
-      message: "Gallery link copied to clipboard!",
-    });
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: "Gallery link copied to clipboard!",
+      });
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        ...snackbar,
+        open: true,
+        message: "Unable to copy gallery link to clipboard.",
+        severity: "error",
+      });
+    }
   };
 
   const handleSnackbarClose = () => {
