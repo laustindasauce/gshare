@@ -4,6 +4,9 @@
 <h3 align="center">Secure, self-hosted photo sharing.</h3>
 <br/>
 
+![Release CI Status](https://github.com/austinbspencer/gshare/actions/workflows/release.yml/badge.svg)
+![Docs CI Status](https://github.com/austinbspencer/gshare/actions/workflows/deploy-docs.yml/badge.svg)
+
 ## Documentation
 
 All documentation, screenshots, and guides can be found at [austinbspencer.github.io/gshare](https://austinbspencer.github.io/gshare).
