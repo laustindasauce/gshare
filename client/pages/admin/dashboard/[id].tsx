@@ -2,6 +2,7 @@ import EventsGraphs from "@/components/events/EventsGraphs";
 import EventsTable from "@/components/events/EventsTable";
 import GallerySettings from "@/components/gallery/GallerySettings";
 import GalleryShareButton from "@/components/gallery/GalleryShareButton";
+import HeroOptions from "@/components/gallery/HeroOptions";
 import ZipGalleryButton from "@/components/gallery/ZipGalleryButton";
 import Snacks from "@/components/global/Snacks";
 import FeaturedImage from "@/components/photos/FeaturedImage";
@@ -241,6 +242,7 @@ const GalleryHandler = ({ galleryID, token }: Props) => {
           >
             <Tab value="one" label="Gallery" />
             <Tab value="two" label="Settings" />
+            <Tab value="twoPointFive" label="Display" />
             <Tab value="three" label="Events" />
           </Tabs>
         </Box>
@@ -294,6 +296,22 @@ const GalleryHandler = ({ galleryID, token }: Props) => {
                 onUpdate={handleUpdate}
               />
             </Paper>
+          </Container>
+        </TabPanel>
+        <TabPanel value="twoPointFive">
+          <Container sx={{ mt: 2 }} maxWidth="md">
+            {gallery.hero_enabled ? (
+              <HeroOptions
+                heroVariant={gallery.hero_variant}
+                loading={updateLoading}
+                onUpdate={handleUpdate}
+              />
+            ) : (
+              <Typography>
+                You have the hero option disabled. If you enable it you can
+                choose your display preference here.
+              </Typography>
+            )}
           </Container>
         </TabPanel>
         <TabPanel value="three">
