@@ -24,7 +24,7 @@ import { getImageBlurURL } from "@/helpers/photos";
 import axios from "axios";
 import { useRouter } from "next/router";
 import HeroImage from "@/components/client/HeroImage";
-// import HeroImageAlt from "@/components/client/HeroImageAlt";
+import HeroImageAlt from "@/components/client/HeroImageAlt";
 
 interface IParams extends ParsedUrlQuery {
   path: string;
@@ -178,11 +178,22 @@ const ClientGalleryHandler = (props: Props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {props.gallery.hero_enabled && (
-        <HeroImage
-          img={props.gallery.featured_image}
-          title={props.gallery.title}
-          padding={0}
-        />
+        <React.Fragment>
+          {props.gallery.hero_variant === 0 && (
+            <HeroImage
+              img={props.gallery.featured_image}
+              title={props.gallery.title}
+              padding={0}
+            />
+          )}
+          {props.gallery.hero_variant === 1 && (
+            <HeroImageAlt
+              img={props.gallery.featured_image}
+              title={props.gallery.title}
+              padding={0}
+            />
+          )}
+        </React.Fragment>
       )}
       <Container maxWidth={false} id="gallery-header">
         <GalleryHeader gallery={props.gallery} />

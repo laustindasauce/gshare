@@ -541,7 +541,7 @@ func UpdateGallery(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Println(galleryUpdate)
+	log.Debugf("Gallery update request body: %v\n", galleryUpdate)
 
 	// Handle featured image updates here
 	if galleryUpdate.FeaturedImageID != nil {

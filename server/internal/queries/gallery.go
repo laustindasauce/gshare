@@ -127,8 +127,6 @@ func (r *galleryRepository) UpdateGallery(gallery *models.Gallery, updateGallery
 		gallery.Path = *updateGallery.Path
 	}
 
-	gallery.EventDate = updateGallery.EventDate
-
 	if updateGallery.Live != nil {
 		gallery.Live = *updateGallery.Live
 	}
@@ -160,6 +158,15 @@ func (r *galleryRepository) UpdateGallery(gallery *models.Gallery, updateGallery
 	}
 	if updateGallery.HeroEnabled != nil {
 		gallery.HeroEnabled = *updateGallery.HeroEnabled
+	}
+
+	// Changes that only happen when we aren't updating hero variant
+	// These are changes that we can possibly set to nil on updates
+	if updateGallery.HeroVariant == nil {
+		gallery.EventDate = updateGallery.EventDate
+	} else {
+		// update the hero variant
+		gallery.HeroVariant = *updateGallery.HeroVariant
 	}
 
 	// Save the Changes and return the resulting error or nil

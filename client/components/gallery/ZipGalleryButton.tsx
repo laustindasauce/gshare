@@ -83,7 +83,7 @@ const ZipGalleryButton = ({ gallery, setSnackBar }: Props) => {
             ZIP files. If you don&apos;t, the ZIP files will still be generated
             on demand to avoid any missing or extra images in the download.
           </DialogContentText>
-          <Alert sx={{ mt: 2 }}>
+          <Alert severity="info" sx={{ mt: 2 }}>
             The duration of ZIP creation may vary based on several factors,
             primarily influenced by the size of your gallery.
           </Alert>
