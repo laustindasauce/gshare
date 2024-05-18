@@ -2,8 +2,16 @@
 # client-entrypoint.sh
 echo "APP Version: $NEXT_PUBLIC_APP_VERSION"
 
+# Combine SERVER_PROTOCOL and SERVER_HOST into a full URL
+export SERVER_URL="$SERVER_PROTOCOL://$SERVER_HOST"
+export NEXT_PUBLIC_API_URL="$SERVER_URL"
+
+echo "API URL: $NEXT_PUBLIC_API_URL"
+
 # All required environment variables available on frontend
 REQUIRED_VARIABLES=(
+    "SERVER_PROTOCOL"
+    "SERVER_HOST"
     "NEXT_PUBLIC_API_URL"
     "NEXT_PUBLIC_CLIENT_URL"
     "NEXT_PUBLIC_PHOTOGRAPHER_NAME"
