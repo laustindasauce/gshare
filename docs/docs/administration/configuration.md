@@ -12,13 +12,14 @@ Notice the `NEXT_PUBLIC_*` variables that are duplicated on client & server requ
 ## Environment Variables
 
 :::info Required
-There are 6 unique environment variables that are required for gshare to run.
+There are 7 unique environment variables that are required for gshare to run.
 
-- NEXT_PUBLIC_API_URL
 - NEXT_PUBLIC_CLIENT_URL
 - NEXT_PUBLIC_PHOTOGRAPHER_NAME
 - NEXT_PUBLIC_PHOTOGRAPHER_EMAIL
 - NEXT_PUBLIC_PHOTOGRAPHER_WEBSITE
+- SERVER_PROTOCOL
+- SERVER_HOST
 - JWT_SECRET_KEY
   :::
 
@@ -26,7 +27,6 @@ There are 6 unique environment variables that are required for gshare to run.
 
 | Variable Name                        | Default   | Required |
 | ------------------------------------ | --------- | -------- |
-| **NEXT_PUBLIC_API_URL**              |           | yes      |
 | **NEXT_PUBLIC_CLIENT_URL**           |           | yes      |
 | **NEXT_PUBLIC_PHOTOGRAPHER_NAME**    |           | yes      |
 | **NEXT_PUBLIC_PHOTOGRAPHER_EMAIL**   |           | yes      |
@@ -51,6 +51,8 @@ When using Redis for cache -- If you download the zip for a gallery that respons
 | ----------------------------------- | ------------------------------------------------ | -------- |
 | **NEXT_PUBLIC_CLIENT_URL**          |                                                  | yes      |
 | **NEXT_PUBLIC_PHOTOGRAPHER_NAME**   |                                                  | yes      |
+| **SERVER_PROTOCOL**                 |                                                  | yes      |
+| **SERVER_HOST**                     |                                                  | yes      |
 | **JWT_SECRET_KEY**                  |                                                  | yes      |
 | JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT | `0`                                              | no       |
 | JWT_SECRET_KEY_EXPIRE_HOURS_COUNT   | `6`                                              | no       |

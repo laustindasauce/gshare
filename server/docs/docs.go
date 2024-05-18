@@ -1265,6 +1265,10 @@ const docTemplate = `{
                     "description": "HeroEnabled will determine if the gallery has a featured image landing page",
                     "type": "boolean"
                 },
+                "hero_variant": {
+                    "description": "HeroVariant is the display variant for the hero",
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -1330,6 +1334,9 @@ const docTemplate = `{
                 },
                 "hero_enabled": {
                     "type": "boolean"
+                },
+                "hero_variant": {
+                    "type": "integer"
                 },
                 "live": {
                     "type": "string"
