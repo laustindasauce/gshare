@@ -47,6 +47,8 @@ type Gallery struct {
 	ZipsReady bool `json:"zips_ready" gorm:"not null"`
 	// HeroEnabled will determine if the gallery has a featured image landing page
 	HeroEnabled bool `json:"hero_enabled" gorm:"not null;default:true"`
+	// HeroVariant is the display variant for the hero
+	HeroVariant int `json:"hero_variant" gorm:"not null;default:0"`
 	// All events related to this gallery
 	Events []Event `json:"events" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignKey:GalleryID"`
 }
@@ -65,6 +67,7 @@ type GalleryUpdate struct {
 	Reminder        *bool      `json:"reminder"`
 	ReminderEmails  *string    `json:"reminder_emails"`
 	HeroEnabled     *bool      `json:"hero_enabled"`
+	HeroVariant     *int       `json:"hero_variant"`
 }
 
 // Used to handle unlocking the gallery for clients

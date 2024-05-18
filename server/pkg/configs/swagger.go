@@ -17,8 +17,8 @@ var (
 func SetDocsInfo() {
 	setAppVersion()
 
-	docs.SwaggerInfo.Host = Getenv("SWAGGER_URL", "localhost:8323")
-	docs.SwaggerInfo.Schemes = strings.Split(strings.TrimSpace(Getenv("SWAGGER_PROTOCOL", "http,https")), ",")
+	docs.SwaggerInfo.Host = Getenv("SWAGGER_URL", Getenv("SERVER_HOST", "localhost:8323"))
+	docs.SwaggerInfo.Schemes = strings.Split(strings.TrimSpace(Getenv("SWAGGER_PROTOCOL", Getenv("SERVER_PROTOCOL", "https"))), ",")
 	docs.SwaggerInfo.BasePath = "/api"
 	docs.SwaggerInfo.Title = fmt.Sprintf("gshare %s", Version)
 	docs.SwaggerInfo.Description = "Auto-generated API documentation for the gshare REST API."
