@@ -78,6 +78,7 @@ export interface GalleryModel {
   reminder: boolean;
   reminder_emails: string | null;
   hero_enabled: boolean;
+  hero_variant: number;
   events: EventModel[];
 }
 
@@ -94,6 +95,7 @@ export interface GalleryUpdateModel {
   reminder?: boolean | null;
   reminder_emails?: string | null;
   hero_enabled?: boolean | null;
+  hero_variant?: number | null;
 }
 
 export interface NewGalleryModel {
